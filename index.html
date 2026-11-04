@@ -15,9 +15,12 @@ input{font:inherit;border:1px solid var(--line);border-radius:14px;padding:10px 
 .x{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:#fff;cursor:pointer}
 .tag{font-size:12px;color:var(--mute)}
 .tbl{border-collapse:collapse;font-size:12px;width:100%}.tbl th,.tbl td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:right;vertical-align:top}.tbl th{color:var(--mute);font-weight:500;white-space:nowrap}
+body.lock main{display:none}#lock{display:none;max-width:320px;margin:20vh auto;background:#fff;border-radius:28px;padding:24px;gap:12px}body.lock #lock{display:grid}
 button:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 @media(max-width:600px){.two{grid-template-columns:1fr}}
-</style></head><body><main>
+</style></head><body class="lock">
+<form id="lock"><h1>شرکت‌یاب</h1><div class="fld"><label for="pw">رمز ورود</label><input id="pw" type="password" autocomplete="current-password"></div><button class="btn" type="submit">ورود</button><span class="sub" id="pwMsg"></span></form>
+<main>
 <h1>شرکت‌یاب <span class="tag" id="coTag"></span></h1>
 <div class="two"><div class="fld"><label for="coKw">کالا یا حوزه‌ی فعالیت (مثلاً ذرت)</label><input id="coKw"></div>
 <div class="fld"><label for="coTok">توکن گیت‌هاب (فقط روی همین مرورگر ذخیره می‌شود)</label><input id="coTok" type="password" autocomplete="off"></div></div>
@@ -27,6 +30,12 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-of
 </main>
 <script>
 const $ = id => document.getElementById(id);
+/* shortcut: client-side lock only (hash in the page); the repo and db branch stay public. Use a private repo for real secrecy. */
+const PASS_HASH='8d535a61860efcb4cc2db3fd8993e97f7d2d8e18170c7714caf6070079c68eb1';
+const sha=async t=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)))].map(b=>b.toString(16).padStart(2,'0')).join('');
+try{ if(localStorage.getItem('sherkatyab_auth')===PASS_HASH) document.body.classList.remove('lock'); }catch{}
+$('lock').onsubmit=async e=>{ e.preventDefault(); const h=await sha($('pw').value);
+  if(h===PASS_HASH){ try{localStorage.setItem('sherkatyab_auth',h);}catch{} document.body.classList.remove('lock'); } else $('pwMsg').textContent='رمز اشتباه است'; };
 const fa = (n,d=0) => isFinite(n) ? n.toLocaleString('fa-IR',{maximumFractionDigits:d}) : '—';
 /* جستجوی شرکت‌ها: دیتابیس روی شاخه‌ی db، اجرا با workflow_dispatch */
 const REPO='alirezahasheminezhad/sherkatyab', RAW='https://raw.githubusercontent.com/'+REPO+'/db/';
