@@ -25,8 +25,12 @@ def save(name, obj):
     json.dump(obj, open(f"{DB}/{name}.json", "w", encoding="utf-8"), ensure_ascii=False, indent=0, sort_keys=True)
 
 
+_DIGITS = str.maketrans("".join(chr(0x6F0 + i) for i in range(10)) + "".join(chr(0x660 + i) for i in range(10)), "0123456789" * 2)
+
+
 def slug(kw):
-    return re.sub(r"\s+", " ", kw).strip().replace("ي", "ی").replace("ك", "ک")
+    kw = kw.translate(_DIGITS).replace("\u200c", " ").replace("ي", "ی").replace("ك", "ک")
+    return re.sub(r"\s+", " ", kw).strip()
 
 
 def score(c, rank, n):
@@ -57,17 +61,19 @@ async def run(kw, pages, refresh, search, company, now=None):
             raise SystemExit(f"no result for {kw!r}; nothing saved")
         searches[kw] = {"keyword": kw, "at": now, "total": total, "ids": ids}
     ids = searches[kw]["ids"]
-    # profiles (address, capital, ...) for the best-ranked companies we do not have yet; stop at the site's limit
-    ranked = sorted(ids, key=lambda i: -score(companies[i], ids.index(i), len(ids)))
+    # profiles (address, capital, board, shareholders, ...) for the best-ranked companies we do not have yet.
+    # rs_company parses the whole page in one fetch, so sections=None keeps every section at no extra request cost.
+    pos = {cid: i for i, cid in enumerate(ids)}
+    ranked = sorted(ids, key=lambda i: -score(companies[i], pos[i], len(ids)))
     got = 0
     for cid in [i for i in ranked if "profile" not in companies[i]][:PROFILES_PER_RUN]:
         try:
-            companies[cid]["profile"] = await company(company_id=cid, sections=["people"], max_rows=5)
+            companies[cid]["profile"] = await company(company_id=cid, sections=None, max_rows=8)
             got += 1
         except Exception as e:  # limit reached or site error: keep what we have, fill the rest next run
             print(f"profile stopped at {cid}: {e}")
             break
-    searches[kw]["ranked"] = sorted(ids, key=lambda i: -score(companies[i], ids.index(i), len(ids)))
+    searches[kw]["ranked"] = sorted(ids, key=lambda i: -score(companies[i], pos[i], len(ids)))
     save("companies", companies)
     save("searches", searches)
     print(f"{kw}: {len(ids)} companies, {got} new profiles, cached={'yes' if fresh else 'no'}")

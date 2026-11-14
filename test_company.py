@@ -9,6 +9,7 @@ async def fs(**k):
         {"company_id": "3", "name": "پ"}]}
 async def fc(company_id, sections, max_rows):
     calls["c"] += 1
+    assert sections is None  # whole profile in the single page fetch
     if calls["c"] > 2: raise RuntimeError("limit")
     return {"address": "x" + company_id}
 r = asyncio.run(cs.run("ذرت", 3, False, fs, fc))
@@ -17,4 +18,8 @@ assert calls == {"s": 1, "c": 3}  # 3rd call hit the limit and stopped
 asyncio.run(cs.run("ذرت", 3, False, fs, fc))
 assert calls["s"] == 1  # second search of same keyword is served from the cache
 assert cs.load("companies")["2"]["profile"] == {"address": "x2"}
+assert cs.slug("دانش\u200cبنیان  كيوي ") == "دانش بنیان کیوی"  # ZWNJ + Arabic letters, same as the page's norm()
+assert cs.slug("۱۲۳۴٥٦") == "123456"  # Persian/Arabic digits, same as the page's norm()
+asyncio.run(cs.run("ذرت\u200c", 3, False, fs, fc))
+assert calls["s"] == 1  # normalized variants hit the same cache entry
 print("ok company")

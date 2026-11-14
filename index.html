@@ -1,76 +1,1091 @@
 <!doctype html>
-<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>شرکت‌یاب</title>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="شرکت‌یاب — جستجوی شرکت‌های ایران بر پایه کالا و حوزه فعالیت، با داده‌های رسمیو، رتبه‌بندی و خروجی اکسل">
+<meta name="theme-color" content="#0d3f3a">
+<title>شرکت‌یاب — جستجوی شرکت‌های ایران</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='12' fill='%230d3f3a'/%3E%3Ccircle cx='21' cy='21' r='13' fill='none' stroke='%23fffdf8' stroke-width='3.4'/%3E%3Cpath d='M31 31l10 10' stroke='%23fffdf8' stroke-width='3.4' stroke-linecap='round'/%3E%3Cpath d='M15 26v-6M21 26V14M27 26v-9' stroke='%23f2b544' stroke-width='3.2' stroke-linecap='round'/%3E%3C/svg%3E">
 <style>
-:root{--bg:#e8e8e8;--card:#fff;--line:#e4e4e4;--ink:#111;--mute:#8a8a8a;--acc:#e2654a}
+@font-face{font-family:Vazirmatn;src:url('vazirmatn.woff2') format('woff2');font-weight:100 900;font-style:normal;font-display:swap}
+
+:root{
+  --paper:#f3efe6; --surface:#fffdf8; --surface2:#f8f4ea; --overlay:#fffdf8;
+  --line:#e5ddcb; --line2:#d5cbb4;
+  --ink:#20302c; --mute:#68766f; --faint:#93a09a;
+  --teal:#0e5f55; --teal-deep:#0d3f3a; --teal-ink:#0a2e2b; --teal-soft:#e2efe9; --teal-bright:#17897a;
+  --saffron:#e89b2d; --saffron-hi:#f2b544; --saffron-soft:#fbf0da; --saffron-ink:#4a3208;
+  --lapis:#2f5fd0; --lapis-soft:#e7edfb;
+  --pom:#c23a4b; --pom-soft:#fbe9eb;
+  --pistachio:#5f8f33; --pistachio-soft:#ecf3e2;
+  --shadow:0 1px 2px rgba(32,48,44,.05),0 8px 28px -12px rgba(32,48,44,.18);
+  --shadow-lg:0 24px 70px -24px rgba(10,46,43,.4);
+  --r:16px; --r-sm:11px;
+  --girih:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72'%3E%3Cpath d='M36 5l7 24 24 7-24 7-7 24-7-24-24-7 24-7z' fill='none' stroke='white' stroke-opacity='.07'/%3E%3Ccircle cx='36' cy='36' r='2.6' fill='white' fill-opacity='.06'/%3E%3C/svg%3E");
+  color-scheme:light;
+}
+[data-theme="dark"]{
+  --paper:#0d1514; --surface:#151f1d; --surface2:#1a2624; --overlay:#182422;
+  --line:#26332f; --line2:#33433e;
+  --ink:#e7efeb; --mute:#9db0a8; --faint:#6d7f78;
+  --teal:#2fbfa8; --teal-deep:#0b2b27; --teal-ink:#d9efe9; --teal-soft:#12332e; --teal-bright:#3ad2ba;
+  --saffron:#f0b45c; --saffron-hi:#f6c678; --saffron-soft:#33270f; --saffron-ink:#f6c678;
+  --lapis:#7ea2f0; --lapis-soft:#1b2740;
+  --pom:#e57684; --pom-soft:#3c1c22;
+  --pistachio:#9cc86a; --pistachio-soft:#233014;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px -12px rgba(0,0,0,.5);
+  --shadow-lg:0 24px 70px -20px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
 *{box-sizing:border-box;margin:0}
-body{font-family:Vazirmatn,Tahoma,sans-serif;background:var(--bg);color:var(--ink);padding:clamp(8px,3vw,40px);line-height:1.6;font-size:14px}
-main{max-width:1280px;margin:auto;background:var(--card);border-radius:28px;padding:24px;display:grid;gap:14px}
-h1{font-size:22px}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.fld{display:grid;gap:4px}.fld label,.sub{font-size:12px;color:var(--mute)}
-input{font:inherit;border:1px solid var(--line);border-radius:14px;padding:10px 14px;width:100%}
-.bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.btn{border:0;cursor:pointer;font:inherit;font-weight:500;background:var(--acc);color:#fff;border-radius:99px;padding:10px 22px}
-.x{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:#fff;cursor:pointer}
-.tag{font-size:12px;color:var(--mute)}
-.tbl{border-collapse:collapse;font-size:12px;width:100%}.tbl th,.tbl td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:right;vertical-align:top}.tbl th{color:var(--mute);font-weight:500;white-space:nowrap}
-body.lock main{display:none}#lock{display:none;max-width:320px;margin:20vh auto;background:#fff;border-radius:28px;padding:24px;gap:12px}body.lock #lock{display:grid}
-button:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
-@media(max-width:600px){.two{grid-template-columns:1fr}}
-</style></head><body class="lock">
-<form id="lock"><h1>شرکت‌یاب</h1><div class="fld"><label for="pw">رمز ورود</label><input id="pw" type="password" autocomplete="current-password"></div><button class="btn" type="submit">ورود</button><span class="sub" id="pwMsg"></span></form>
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{
+  font-family:Vazirmatn,Tahoma,sans-serif;font-size:14px;line-height:1.7;
+  background:
+    radial-gradient(900px 480px at 85% -80px,rgba(232,155,45,.09),transparent 60%),
+    radial-gradient(800px 500px at 8% 12%,rgba(14,95,85,.08),transparent 55%),
+    var(--paper);
+  color:var(--ink);min-height:100vh;
+}
+::selection{background:var(--saffron-hi);color:var(--saffron-ink)}
+/* scrollbars in the app's own language */
+*{scrollbar-width:thin;scrollbar-color:var(--teal-bright) var(--surface2)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:var(--surface2)}
+::-webkit-scrollbar-thumb{background:var(--teal-bright);border-radius:99px;border:2px solid var(--surface2)}
+::-webkit-scrollbar-thumb:hover{background:var(--saffron)}
+button{font:inherit;color:inherit}
+input,select{font:inherit;color:var(--ink)}
+a{color:var(--lapis)}
+svg.ic{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+:focus-visible{outline:2px solid var(--saffron);outline-offset:2px;border-radius:6px}
+
+/* ---------- lock ---------- */
+#lockScreen{display:none;position:fixed;inset:0;z-index:60;align-items:center;justify-content:center;padding:20px;
+  background:radial-gradient(1000px 600px at 70% -10%,#14554c 0%,transparent 55%),radial-gradient(700px 500px at 10% 110%,#0f4a40 0%,transparent 55%),var(--teal-deep)}
+#lockScreen::before{content:"";position:absolute;inset:0;background-image:var(--girih);pointer-events:none}
+body.lock #lockScreen{display:flex}
+body.lock #app,body.lock #drawer,body.lock #scrim{display:none}
+.lock-card{position:relative;width:min(360px,100%);background:var(--surface);border-radius:22px;padding:30px 28px;box-shadow:var(--shadow-lg);display:grid;gap:14px;text-align:center;animation:pop .45s cubic-bezier(.2,.9,.3,1.2) both}
+.lock-card .mark{width:64px;height:64px;margin:0 auto;color:var(--teal)}
+.lock-card h1{font-size:24px;font-weight:800}
+.lock-card .sub{color:var(--mute);font-size:12.5px;margin-top:-8px}
+.lock-card.shake{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+@keyframes pop{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+
+/* ---------- fields & buttons ---------- */
+.fld{display:grid;gap:5px;text-align:right}
+.fld label{font-size:12px;color:var(--mute);font-weight:500}
+.inp{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line2);border-radius:var(--r-sm);padding:0 12px;transition:border-color .15s,box-shadow .15s}
+.inp:focus-within{border-color:var(--teal-bright);box-shadow:0 0 0 3px rgba(23,137,122,.16)}
+.inp input{border:0;background:none;padding:10px 0;width:100%;outline:none}
+.inp .eye{border:0;background:none;cursor:pointer;color:var(--faint);display:grid;place-items:center;padding:4px}
+.inp .eye:hover{color:var(--teal)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:0;cursor:pointer;font-weight:600;border-radius:99px;padding:10px 22px;transition:transform .12s,box-shadow .15s,background .15s;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:linear-gradient(135deg,var(--saffron-hi),var(--saffron));color:#3c2a06;box-shadow:0 6px 18px -6px rgba(232,155,45,.55)}
+.btn.primary:hover{box-shadow:0 9px 24px -6px rgba(232,155,45,.7);transform:translateY(-1px)}
+.btn.teal{background:var(--teal);color:#fff}
+[data-theme="dark"] .btn.teal{color:#08211d}
+.btn.teal:hover{background:var(--teal-bright)}
+.btn.ghost{background:var(--surface);border:1px solid var(--line2);color:var(--ink)}
+.btn.ghost:hover{border-color:var(--teal-bright);color:var(--teal)}
+.btn.small{padding:7px 15px;font-size:12.5px}
+.btn.icon{width:42px;height:42px;padding:0;border-radius:12px}
+.btn[disabled]{opacity:.5;pointer-events:none}
+.iconbtn{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;border:1px solid transparent;background:none;cursor:pointer;color:var(--mute);transition:background .15s,color .15s}
+.iconbtn:hover{background:var(--teal-soft);color:var(--teal)}
+.msg-err{color:var(--pom);font-size:12.5px;min-height:18px}
+
+/* ---------- topbar ---------- */
+#topbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:12px;padding:10px clamp(14px,4vw,36px);
+  background:color-mix(in srgb,var(--surface) 82%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand .mark{width:38px;height:38px;color:var(--teal);flex:none}
+.brand b{font-size:17px;font-weight:800;display:block;line-height:1.3}
+.brand span{font-size:11px;color:var(--mute);display:block}
+#topbar .spacer{flex:1}
+#topbar .iconbtn{border-color:var(--line)}
+
+/* ---------- layout ---------- */
+main{max-width:1240px;margin:0 auto;padding:clamp(14px,3vw,30px);display:grid;gap:18px}
+.reveal{animation:fadeUp .55s ease both;animation-delay:var(--d,0s)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* ---------- hero ---------- */
+.hero{position:relative;border-radius:24px;overflow:hidden;color:#f2f7f3;
+  background:radial-gradient(700px 340px at 88% -40%,rgba(242,181,68,.22),transparent 60%),radial-gradient(600px 380px at 4% 120%,rgba(47,95,208,.25),transparent 55%),linear-gradient(130deg,#0c3833,#115048 55%,#0d443d)}
+.hero::before{content:"";position:absolute;inset:0;background-image:var(--girih);pointer-events:none}
+.hero::after{content:"";position:absolute;inset:auto -60px -140px auto;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(242,181,68,.16),transparent 65%);pointer-events:none}
+.hero-inner{position:relative;padding:clamp(22px,4vw,40px);display:grid;gap:16px}
+.hero h1{font-size:clamp(22px,3.4vw,32px);font-weight:800;letter-spacing:-.3px}
+.hero h1 em{font-style:normal;color:var(--saffron-hi)}
+.hero .lead{color:#c9dcd4;font-size:13.5px;max-width:640px;margin-top:-6px}
+.searchbar{display:flex;gap:10px;flex-wrap:wrap}
+.kw-wrap{flex:1 1 300px;display:flex;align-items:center;gap:10px;background:rgba(255,253,248,.97);border-radius:14px;padding:0 16px;border:2px solid transparent;transition:border-color .15s,box-shadow .15s}
+.kw-wrap:focus-within{border-color:var(--saffron-hi);box-shadow:0 0 0 4px rgba(242,181,68,.22)}
+.kw-wrap svg{color:var(--teal);width:20px;height:20px}
+.kw-wrap input{flex:1;border:0;background:none;outline:none;padding:13px 0;font-size:15px;color:#20302c}
+.kw-wrap input::placeholder{color:#93a09a}
+.searchbar select{background:rgba(255,253,248,.97);color:#20302c;border:0;border-radius:14px;padding:0 14px;font-size:13px;cursor:pointer;min-height:48px}
+.searchbar .btn.primary{min-height:48px;font-size:15px;padding:10px 30px}
+.searchbar .btn.icon{min-height:48px;width:48px;height:48px;border-radius:14px;background:rgba(255,253,248,.14);border:1px solid rgba(255,255,255,.28);color:#f2f7f3}
+.searchbar .btn.icon:hover{background:rgba(255,253,248,.26)}
+.searchbar .btn.icon svg{transition:transform .4s}
+.searchbar .btn.icon:hover svg{transform:rotate(-180deg)}
+
+/* token box */
+#tokenBox{background:rgba(9,38,34,.42);border:1px solid rgba(255,255,255,.14);border-radius:14px;font-size:12.5px}
+#tokenBox summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:9px;padding:10px 16px;color:#c9dcd4;user-select:none}
+#tokenBox summary::-webkit-details-marker{display:none}
+#tokenBox summary:hover{color:#fff}
+#tokenBox summary .chev{margin-inline-start:auto;transition:transform .2s}
+#tokenBox[open] summary .chev{transform:rotate(180deg)}
+.tok-dot{width:8px;height:8px;border-radius:50%;background:var(--pom);flex:none}
+.tok-dot.on{background:#7ed957}
+.tok-body{padding:4px 16px 16px;display:grid;gap:10px}
+.tok-body .inp{background:rgba(255,253,248,.97)}
+.tok-body .inp input{color:#20302c;font-size:13px}
+.tok-help{color:#a9c2ba;line-height:1.9}
+.tok-help a{color:var(--saffron-hi)}
+.tok-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tok-row .btn.small{font-size:12px}
+
+/* chips */
+#chipsWrap{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.chips-label{font-size:12px;color:#a9c2ba;display:inline-flex;align-items:center;gap:6px}
+#chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.22);background:rgba(255,253,248,.1);color:#eef5f1;border-radius:99px;padding:6px 14px;cursor:pointer;font-size:12.5px;transition:background .15s,transform .12s,border-color .15s}
+.chip:hover{background:rgba(255,253,248,.22);transform:translateY(-1px)}
+.chip.active{background:var(--saffron-hi);color:#3c2a06;border-color:transparent;font-weight:700}
+.chip .n{font-size:11px;opacity:.75}
+.chip .dot{width:7px;height:7px;border-radius:50%;background:#7ed957}
+.chip .dot.stale{background:var(--saffron-hi)}
+.chip.active .dot{background:#3c2a06}
+.chips-note{font-size:12px;color:#a9c2ba}
+
+/* ---------- status card ---------- */
+#statusCard{border-radius:var(--r);border:1px solid var(--line);background:var(--surface);box-shadow:var(--shadow);padding:16px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+#statusCard .spin{width:26px;height:26px;flex:none;border-radius:50%;border:3px solid var(--teal-soft);border-top-color:var(--teal-bright);animation:rot 1s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+#statusCard .st-icon{width:38px;height:38px;flex:none;border-radius:12px;display:grid;place-items:center}
+#statusCard.error .st-icon{background:var(--pom-soft);color:var(--pom)}
+#statusCard.warn .st-icon{background:var(--saffron-soft);color:var(--saffron)}
+#statusCard .st-body{flex:1;min-width:200px;display:grid;gap:2px}
+#statusCard .st-title{font-weight:700}
+#statusCard .st-sub{font-size:12.5px;color:var(--mute)}
+#statusCard .st-sub a{font-weight:600}
+#elapsed{font-variant-numeric:tabular-nums;font-weight:700;color:var(--teal);background:var(--teal-soft);border-radius:9px;padding:4px 12px;font-size:13px}
+
+/* ---------- results ---------- */
+.res-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.res-head h2{font-size:20px;font-weight:800}
+.res-head h2 b{color:var(--teal)}
+.age{font-size:12px;color:var(--mute);display:inline-flex;align-items:center;gap:6px}
+.age .dot{width:7px;height:7px;border-radius:50%;background:var(--pistachio)}
+.age.stale .dot{background:var(--saffron)}
+.age.stale{color:var(--saffron-ink)}
+[data-theme="dark"] .age.stale{color:var(--saffron)}
+
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);transition:transform .15s,border-color .15s;text-align:right}
+.stat .si{width:40px;height:40px;flex:none;border-radius:12px;display:grid;place-items:center}
+.stat b{font-size:20px;font-weight:800;display:block;line-height:1.25;font-variant-numeric:tabular-nums}
+.stat span{font-size:11.5px;color:var(--mute);display:block}
+.stat.clickable{cursor:pointer}
+.stat.clickable:hover{transform:translateY(-2px);border-color:var(--line2)}
+.stat.on{border-color:var(--teal-bright);box-shadow:0 0 0 3px rgba(23,137,122,.15)}
+.si.t{background:var(--teal-soft);color:var(--teal)}
+.si.s{background:var(--saffron-soft);color:var(--saffron)}
+.si.l{background:var(--lapis-soft);color:var(--lapis)}
+.si.p{background:var(--pistachio-soft);color:var(--pistachio)}
+.si.r{background:var(--pom-soft);color:var(--pom)}
+
+.toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.filter-wrap{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line2);border-radius:99px;padding:0 16px;flex:1 1 220px;max-width:360px;transition:border-color .15s,box-shadow .15s}
+.filter-wrap:focus-within{border-color:var(--teal-bright);box-shadow:0 0 0 3px rgba(23,137,122,.14)}
+.filter-wrap svg{color:var(--faint);width:16px;height:16px}
+.filter-wrap input{border:0;background:none;outline:none;padding:9px 0;width:100%;font-size:13px}
+.toolbar select{background:var(--surface);border:1px solid var(--line2);border-radius:99px;padding:9px 14px;font-size:12.5px;cursor:pointer;color:var(--ink)}
+.count{font-size:12.5px;color:var(--mute)}
+.toolbar .spacer{flex:1}
+.exp-group{display:flex;gap:8px}
+
+.tbl-wrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:auto;max-height:72vh}
+table.tbl{border-collapse:separate;border-spacing:0;width:100%;font-size:12.8px;min-width:860px}
+.tbl th{position:sticky;top:0;z-index:2;background:var(--surface2);color:var(--mute);font-weight:600;font-size:11.8px;text-align:right;padding:11px 12px;border-bottom:1px solid var(--line2);white-space:nowrap}
+.tbl th.sortable{cursor:pointer;user-select:none}
+.tbl th.sortable:hover{color:var(--teal)}
+.tbl th .arr{opacity:.45;font-size:10px;margin-inline-start:3px}
+.tbl th.sorted{color:var(--teal)}
+.tbl th.sorted .arr{opacity:1}
+.tbl td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top;text-align:right}
+.tbl tbody tr{cursor:pointer;transition:background .12s}
+.tbl tbody tr:nth-child(even){background:color-mix(in srgb,var(--surface2) 45%,transparent)}
+.tbl tbody tr:hover{background:var(--teal-soft)}
+.tbl tbody tr:last-child td{border-bottom:0}
+.rank{display:inline-grid;place-items:center;width:27px;height:27px;border-radius:9px;background:var(--surface2);border:1px solid var(--line);font-weight:700;font-size:11.5px;color:var(--mute)}
+.rank.top{background:linear-gradient(135deg,var(--teal),var(--teal-bright));color:#fff;border-color:transparent}
+[data-theme="dark"] .rank.top{color:#08211d}
+.co-name{font-weight:700;font-size:13.2px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.co-sum{font-size:11.3px;color:var(--mute);margin-top:2px;max-width:340px}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:10.3px;font-weight:600;border-radius:99px;padding:2px 9px;white-space:nowrap}
+.badge svg{width:12px;height:12px}
+.badge.ok{background:var(--pistachio-soft);color:var(--pistachio)}
+.badge.lic{background:var(--lapis-soft);color:var(--lapis)}
+.badge.form{background:var(--surface2);color:var(--mute);border:1px solid var(--line)}
+.nid{font-variant-numeric:tabular-nums;letter-spacing:.4px;color:var(--mute);white-space:nowrap}
+.cap{font-weight:700;color:var(--teal);white-space:nowrap}
+.cap small{display:block;font-weight:400;color:var(--faint);font-size:10.3px}
+.prof{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--mute);white-space:nowrap}
+.prof i{width:8px;height:8px;border-radius:50%;background:var(--line2)}
+.prof.full{color:var(--pistachio)}
+.prof.full i{background:var(--pistachio)}
+
+/* mobile cards */
+.cards{display:none;gap:10px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:14px 16px;display:grid;gap:7px;cursor:pointer;transition:border-color .15s}
+.card:hover{border-color:var(--teal-bright)}
+.card .top{display:flex;align-items:center;gap:10px}
+.card .meta{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--mute)}
+.card .meta b{color:var(--ink);font-weight:600}
+#noMatch{background:var(--surface);border:1px dashed var(--line2);border-radius:var(--r);padding:34px;text-align:center;color:var(--mute)}
+
+/* ---------- welcome ---------- */
+#welcome{display:grid;gap:14px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:var(--shadow);display:grid;gap:8px}
+.step .num{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-weight:800;background:var(--teal-soft);color:var(--teal)}
+.step:nth-child(2) .num{background:var(--saffron-soft);color:var(--saffron)}
+.step:nth-child(3) .num{background:var(--lapis-soft);color:var(--lapis)}
+.step b{font-size:14.5px}
+.step p{font-size:12.5px;color:var(--mute)}
+
+footer{color:var(--mute);font-size:12px;line-height:2;border-top:1px solid var(--line);padding-top:16px}
+footer b{color:var(--ink)}
+footer a{color:var(--teal)}
+
+/* ---------- drawer ---------- */
+#scrim{position:fixed;inset:0;z-index:45;background:rgba(10,35,32,.45);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .25s}
+#scrim.show{opacity:1;pointer-events:auto}
+#drawer{position:fixed;top:0;left:0;bottom:0;z-index:50;width:min(520px,100%);background:var(--overlay);box-shadow:var(--shadow-lg);transform:translateX(-105%);transition:transform .3s cubic-bezier(.25,.9,.3,1);display:flex;flex-direction:column;border-inline-end:1px solid var(--line)}
+#drawer.open{transform:none}
+.dw-head{position:relative;color:#f2f7f3;padding:20px 22px 18px;background:radial-gradient(400px 200px at 90% -60%,rgba(242,181,68,.25),transparent 60%),linear-gradient(130deg,#0c3833,#115048)}
+.dw-head::before{content:"";position:absolute;inset:0;background-image:var(--girih);pointer-events:none}
+.dw-head .row{position:relative;display:flex;align-items:flex-start;gap:10px}
+.dw-head h3{font-size:18px;font-weight:800;flex:1;line-height:1.5}
+.dw-head .close{color:#c9dcd4;border-color:rgba(255,255,255,.2)}
+.dw-head .close:hover{background:rgba(255,255,255,.14);color:#fff}
+.dw-badges{position:relative;display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.dw-badges .badge.form{background:rgba(255,255,255,.12);color:#dcebe4;border-color:rgba(255,255,255,.18)}
+.dw-badges .badge.ok{background:rgba(126,217,87,.18);color:#a5e88b}
+.dw-link{position:relative;display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:12px;color:var(--saffron-hi);text-decoration:none;font-weight:600}
+.dw-link:hover{text-decoration:underline}
+.dw-body{flex:1;overflow-y:auto;padding:18px 22px 30px;display:grid;gap:18px;align-content:start}
+.dw-sec{display:grid;gap:9px}
+.dw-sec>h4{font-size:13px;font-weight:800;color:var(--teal);display:flex;align-items:center;gap:8px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.dw-sec>h4 svg{width:16px;height:16px}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px}
+.fact{display:grid;gap:1px;min-width:0}
+.fact .k{font-size:10.8px;color:var(--faint)}
+.fact .v{font-size:12.8px;font-weight:600;word-break:break-word;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.fact .v .copy{border:0;background:none;cursor:pointer;color:var(--faint);display:inline-grid;place-items:center;padding:2px}
+.fact .v .copy:hover{color:var(--teal)}
+.fact .v .copy svg{width:13px;height:13px}
+.addr{background:var(--surface2);border:1px solid var(--line);border-radius:var(--r-sm);padding:10px 13px;font-size:12.5px;display:grid;gap:4px}
+.addr .k{font-size:10.8px;color:var(--faint);display:flex;align-items:center;justify-content:space-between}
+.addr .k button{border:0;background:none;cursor:pointer;color:var(--faint);display:inline-flex;align-items:center;gap:4px;font-size:10.8px}
+.addr .k button:hover{color:var(--teal)}
+.addr .k button svg{width:12px;height:12px}
+.activity{font-size:12.3px;color:var(--mute);line-height:2;position:relative}
+.activity.clamp{max-height:110px;overflow:hidden}
+.activity.clamp::after{content:"";position:absolute;inset:auto 0 0 0;height:44px;background:linear-gradient(transparent,var(--overlay))}
+.morelink{border:0;background:none;color:var(--lapis);cursor:pointer;font-size:12px;font-weight:600;justify-self:start;padding:0}
+.morelink:hover{text-decoration:underline}
+.mini{width:100%;border-collapse:collapse;font-size:11.8px}
+.mini th{color:var(--faint);font-weight:600;font-size:10.8px;text-align:right;padding:5px 8px;border-bottom:1px solid var(--line2);white-space:nowrap}
+.mini td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.mini tr:last-child td{border-bottom:0}
+.mini .pos{color:var(--mute)}
+.taglist{display:flex;flex-wrap:wrap;gap:7px}
+.tag{font-size:11.5px;background:var(--surface2);border:1px solid var(--line);border-radius:99px;padding:4px 12px;color:var(--ink)}
+.tag.lic{background:var(--lapis-soft);border-color:transparent;color:var(--lapis)}
+.tag.brand{background:var(--saffron-soft);border-color:transparent;color:var(--saffron-ink)}
+[data-theme="dark"] .tag.brand{color:var(--saffron)}
+.prodlist{display:grid;gap:7px}
+.prodlist li{list-style:none;font-size:12px;color:var(--mute);background:var(--surface2);border-radius:var(--r-sm);padding:8px 12px;border-inline-start:3px solid var(--saffron)}
+.adcard{background:var(--surface2);border:1px solid var(--line);border-radius:var(--r-sm);padding:10px 13px;display:grid;gap:4px;font-size:12px}
+.adcard .t{font-weight:700}
+.adcard .m{font-size:10.8px;color:var(--faint);display:flex;gap:10px;flex-wrap:wrap}
+.adcard .x{color:var(--mute);font-size:11.5px;line-height:1.9}
+.adcard a{font-size:11px;font-weight:600;text-decoration:none}
+.note{background:var(--saffron-soft);border:1px solid color-mix(in srgb,var(--saffron) 30%,transparent);color:var(--saffron-ink);border-radius:var(--r-sm);padding:11px 14px;font-size:12px;line-height:1.9;display:flex;gap:9px}
+[data-theme="dark"] .note{color:var(--saffron)}
+.note svg{width:16px;height:16px;flex:none;margin-top:3px}
+
+/* ---------- toasts ---------- */
+#toasts{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:70;display:grid;gap:8px;width:min(420px,calc(100% - 32px))}
+.toast{display:flex;align-items:center;gap:10px;background:var(--teal-ink);color:#eef5f1;border-radius:13px;padding:11px 16px;font-size:12.8px;box-shadow:var(--shadow-lg);animation:toastIn .3s cubic-bezier(.2,.9,.3,1.2) both}
+[data-theme="dark"] .toast{background:#0a2422;border:1px solid var(--line2)}
+.toast svg{width:17px;height:17px;flex:none}
+.toast.ok svg{color:#7ed957}
+.toast.warn svg{color:var(--saffron-hi)}
+.toast.err svg{color:#ff8a97}
+.toast.out{animation:toastOut .25s ease both}
+@keyframes toastIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateY(10px)}}
+
+/* ---------- responsive ---------- */
+@media(max-width:960px){.stats{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:860px){
+  .tbl-wrap{display:none}
+  .cards{display:grid}
+  .steps{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .stat b{font-size:17px}
+  .brand span{display:none}
+  .searchbar select{flex:1}
+  .searchbar .btn.primary{flex:1}
+  .facts{grid-template-columns:1fr}
+  .toolbar .spacer{display:none}
+  .toolbar{gap:8px}
+  .filter-wrap{max-width:none;flex-basis:100%}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body class="lock">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-mark" viewBox="0 0 48 48"><circle cx="21" cy="21" r="13.5" stroke-width="3.4"/><path d="M31 31l10.5 10.5" stroke-width="3.4"/><path d="M15 26.5v-6.5M21 26.5V13.5M27 26.5v-9.5" stroke="var(--saffron)" stroke-width="3.2"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 6.3"/><path d="M20 5v6h-6"/></symbol>
+<symbol id="i-xls" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M9.5 12.5l5 5M14.5 12.5l-5 5"/></symbol>
+<symbol id="i-csv" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></symbol>
+<symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5 5l1.7 1.7M17.3 17.3L19 19M19 5l-1.7 1.7M6.7 17.3L5 19"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11z"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></symbol>
+<symbol id="i-logout" viewBox="0 0 24 24"><path d="M14 4h-7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h7"/><path d="M10 12h10.5"/><path d="M17 8.5l3.5 3.5-3.5 3.5"/></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-eyeoff" viewBox="0 0 24 24"><path d="M4 4l16 16"/><path d="M9.9 5.9A9.4 9.4 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a17.6 17.6 0 0 1-3.3 4M6 7.4A17 17 0 0 0 2.5 12S6 18.5 12 18.5a9 9 0 0 0 3.5-.7"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2.5"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+<symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6"/><path d="M20 4L11 13"/><path d="M19 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5"/></symbol>
+<symbol id="i-bld" viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M15 9h3a2 2 0 0 1 2 2v10"/><path d="M8 7h2M8 11h2M8 15h2"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M12 2.5l2.4 2 3.1-.3 1 3 2.8 1.4-1 3 1 3-2.8 1.4-1 3-3.1-.3-2.4 2-2.4-2-3.1.3-1-3L2.7 15l1-3-1-3 2.8-1.4 1-3 3.1.3z"/><path d="M8.8 12.2l2.2 2.2 4.2-4.4"/></symbol>
+<symbol id="i-cert" viewBox="0 0 24 24"><circle cx="12" cy="9" r="5.5"/><path d="M8.8 13.5L7.5 21l4.5-2.4L16.5 21l-1.3-7.5"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.8a3.5 3.5 0 0 1 0 6.4"/><path d="M17.5 13.7a6.5 6.5 0 0 1 4 6.3"/></symbol>
+<symbol id="i-coins" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7.5" ry="3"/><path d="M4.5 6v6c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3V6"/><path d="M4.5 12v6c0 1.7 3.4 3 7.5 3s7.5-1.3 7.5-3v-6"/></symbol>
+<symbol id="i-cal" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="16" rx="2.5"/><path d="M8 2.5V7M16 2.5V7M3.5 10.5h17"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21.5s-7.5-6.6-7.5-12A7.5 7.5 0 0 1 12 2a7.5 7.5 0 0 1 7.5 7.5c0 5.4-7.5 12-7.5 12z"/><circle cx="12" cy="9.5" r="2.6"/></symbol>
+<symbol id="i-post" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3.5 7l8.5 6 8.5-6"/></symbol>
+<symbol id="i-case" viewBox="0 0 24 24"><rect x="3" y="7.5" width="18" height="13" rx="2.5"/><path d="M8.5 7.5V5a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v2.5"/><path d="M3 13h18"/></symbol>
+<symbol id="i-scroll" viewBox="0 0 24 24"><path d="M6 3.5h12a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2z"/><path d="M8.5 8h7M8.5 12h7M8.5 16h4.5"/></symbol>
+<symbol id="i-tag" viewBox="0 0 24 24"><path d="M3.5 11V4.5a1 1 0 0 1 1-1H11l9.5 9.5a1.4 1.4 0 0 1 0 2L15 20.5a1.4 1.4 0 0 1-2 0z"/><circle cx="8" cy="8" r="1.4"/></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 4v16h16"/><path d="M8 16v-5M12 16V8M16 16v-8.5"/></symbol>
+<symbol id="i-filter" viewBox="0 0 24 24"><path d="M3 5h18l-7 8.5V19l-4 2v-7.5z"/></symbol>
+<symbol id="i-chev" viewBox="0 0 24 24"><path d="M6 9.5l6 6 6-6"/></symbol>
+<symbol id="i-github" viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.58 9.58 0 0 1 5 0c1.91-1.3 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85V21c0 .27.18.58.69.48A10 10 0 0 0 12 2z" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v5.5"/><path d="M12 7.4v.2"/></symbol>
+<symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 3L1.8 20.2h20.4z"/><path d="M12 9.5v5"/><path d="M12 17.4v.2"/></symbol>
+<symbol id="i-ok" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M8 12.3l2.8 2.8L16.5 9"/></symbol>
+<symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.9 5.6L19.5 10l-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.4z"/><path d="M19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></symbol>
+<symbol id="i-hand" viewBox="0 0 24 24"><path d="M7 11V6.5a1.5 1.5 0 0 1 3 0V11"/><path d="M10 10.5V5a1.5 1.5 0 0 1 3 0v5.5"/><path d="M13 10.5V6.5a1.5 1.5 0 0 1 3 0V13"/><path d="M16 12a1.5 1.5 0 0 1 3 0v3.5a6.5 6.5 0 0 1-6.5 6.5h-1a6.5 6.5 0 0 1-5.2-2.6L3.6 15.7a1.6 1.6 0 0 1 2.5-2L7 15V7"/></symbol>
+</defs></svg>
+
+<!-- lock screen -->
+<div id="lockScreen">
+  <form class="lock-card" id="lockForm">
+    <svg class="mark" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><use href="#i-mark"/></svg>
+    <h1>شرکت‌یاب</h1>
+    <p class="sub">جستجوی شرکت‌های ایران از روی کالا و حوزه فعالیت</p>
+    <div class="fld">
+      <label for="pw">رمز ورود</label>
+      <div class="inp">
+        <input id="pw" type="password" autocomplete="current-password" placeholder="••••••••">
+        <button class="eye" type="button" id="pwEye" aria-label="نمایش رمز"><svg class="ic"><use href="#i-eye"/></svg></button>
+      </div>
+    </div>
+    <button class="btn primary" type="submit"><svg class="ic"><use href="#i-lock"/></svg>ورود</button>
+    <span class="msg-err" id="pwMsg" role="alert"></span>
+  </form>
+</div>
+
+<!-- app -->
+<div id="app">
+<header id="topbar">
+  <div class="brand">
+    <svg class="mark" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><use href="#i-mark"/></svg>
+    <div><b>شرکت‌یاب</b><span>جستجوی شرکت‌های ایران</span></div>
+  </div>
+  <div class="spacer"></div>
+  <a class="iconbtn" href="https://github.com/alirezahasheminezhad/sherkatyab" target="_blank" rel="noopener" aria-label="کد منبع در گیت‌هاب" title="کد منبع"><svg class="ic"><use href="#i-github"/></svg></a>
+  <button class="iconbtn" id="themeBtn" aria-label="تغییر پوسته" title="پوسته روشن/تاریک"><svg class="ic"><use href="#i-moon"/></svg></button>
+  <button class="iconbtn" id="logoutBtn" aria-label="خروج" title="خروج از حساب"><svg class="ic"><use href="#i-logout"/></svg></button>
+</header>
+
 <main>
-<h1>شرکت‌یاب <span class="tag" id="coTag"></span></h1>
-<div class="two"><div class="fld"><label for="coKw">کالا یا حوزه‌ی فعالیت (مثلاً ذرت)</label><input id="coKw"></div>
-<div class="fld"><label for="coTok">توکن گیت‌هاب (فقط روی همین مرورگر ذخیره می‌شود)</label><input id="coTok" type="password" autocomplete="off"></div></div>
-<div class="bar"><button class="btn" type="button" id="coGo">جستجو</button><button class="x" type="button" id="coRef" title="جستجوی دوباره‌ی کامل (نادیده گرفتن ذخیره)">↻</button><button class="btn" type="button" id="coXls" hidden>خروجی اکسل</button><span class="sub" id="coMsg"></span></div>
-<div style="overflow:auto"><table id="coTbl" class="tbl"></table></div>
-<p class="sub">نتیجه‌ی هر جستجو در پایگاه‌داده‌ی گیت‌هاب (شاخه‌ی db) ذخیره می‌شود و جستجوی تکراری بدون اجرای دوباره نمایش داده می‌شود. مرتب‌سازی: سرمایه‌ی ثبتی بالاتر، تأییدشده‌تر و دارای مجوز بیشتر. نشانی و کد پستی فقط برای شرکت‌هایی پر می‌شود که پروفایلشان دریافت شده؛ رسمیو در هر اجرا حدود ۵ پروفایل می‌دهد و با جستجوی دوباره تکمیل می‌شود. شماره تلفن در رسمیو وجود ندارد.</p>
+  <section class="hero reveal">
+    <div class="hero-inner">
+      <h1>شرکت‌های ایران را <em>پیدا کنید</em></h1>
+      <p class="lead">نام کالا یا حوزه فعالیت را بنویسید؛ شرکت‌های فعال از ثبت رسمی (رسمیو) پیدا، رتبه‌بندی و برای همیشه ذخیره می‌شوند.</p>
+      <form class="searchbar" id="searchForm">
+        <div class="kw-wrap">
+          <svg class="ic"><use href="#i-search"/></svg>
+          <input id="coKw" placeholder="کالا یا حوزه فعالیت… مثلاً ذرت" autocomplete="off" aria-label="عبارت جستجو">
+        </div>
+        <select id="coPages" title="گستره جستجوی تازه (هر صفحه ۶۰ شرکت)" aria-label="گستره جستجو">
+          <option value="1">۱ صفحه · ۶۰</option>
+          <option value="2">۲ صفحه · ۱۲۰</option>
+          <option value="3" selected>۳ صفحه · ۱۸۰</option>
+          <option value="5">۵ صفحه · ۳۰۰</option>
+          <option value="10">۱۰ صفحه · ۶۰۰</option>
+        </select>
+        <button class="btn primary" type="submit" id="coGo"><svg class="ic"><use href="#i-search"/></svg>جستجو</button>
+        <button class="btn icon" type="button" id="coRef" title="جستجوی تازه — نادیده گرفتن ذخیره" aria-label="جستجوی تازه"><svg class="ic"><use href="#i-refresh"/></svg></button>
+      </form>
+      <details id="tokenBox">
+        <summary><span class="tok-dot" id="tokDot"></span>اتصال به گیت‌هاب برای جستجوی تازه<svg class="ic chev"><use href="#i-chev"/></svg></summary>
+        <div class="tok-body">
+          <div class="tok-row">
+            <div class="inp" style="flex:1;min-width:220px">
+              <input id="coTok" type="password" autocomplete="off" placeholder="توکن Fine-grained گیت‌هاب" aria-label="توکن گیت‌هاب">
+              <button class="eye" type="button" id="tokEye" aria-label="نمایش توکن"><svg class="ic"><use href="#i-eye"/></svg></button>
+            </div>
+            <button class="btn ghost small" type="button" id="tokClear">پاک‌کردن</button>
+          </div>
+          <p class="tok-help">فقط روی همین مرورگر ذخیره می‌شود. ساخت توکن: <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Fine-grained token</a> ← Repository access: فقط همین مخزن ← Permissions: <b>Actions → Read and write</b>. جستجوهای ذخیره‌شده بدون توکن هم باز می‌شوند.</p>
+        </div>
+      </details>
+      <div id="chipsWrap" hidden>
+        <span class="chips-label"><svg class="ic" style="width:14px;height:14px"><use href="#i-spark"/></svg>جستجوهای ذخیره‌شده</span>
+        <div id="chips"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="statusCard" hidden aria-live="polite"></section>
+
+  <section id="results" hidden>
+    <div class="res-head reveal">
+      <h2>نتایج «<b id="resKw"></b>»</h2>
+      <span class="age" id="resAge"></span>
+    </div>
+    <div class="stats reveal" id="stats" style="--d:.06s"></div>
+    <div class="toolbar reveal" style="--d:.12s">
+      <div class="filter-wrap">
+        <svg class="ic"><use href="#i-filter"/></svg>
+        <input id="coFilter" placeholder="فیلتر در نتایج (نام، مدیرعامل، محصول…)" autocomplete="off" aria-label="فیلتر در نتایج">
+      </div>
+      <select id="coSort" aria-label="مرتب‌سازی">
+        <option value="rank:1">رتبه‌بندی شرکت‌یاب</option>
+        <option value="capital:-1">سرمایه: بیشترین</option>
+        <option value="licenses:-1">مجوز: بیشترین</option>
+        <option value="founded:1">تأسیس: قدیمی‌ترین</option>
+        <option value="founded:-1">تأسیس: جدیدترین</option>
+        <option value="name:1">نام: الفبایی</option>
+      </select>
+      <span class="count" id="coCount"></span>
+      <div class="spacer"></div>
+      <div class="exp-group">
+        <button class="btn teal small" type="button" id="coXls"><svg class="ic"><use href="#i-xls"/></svg>اکسل</button>
+        <button class="btn ghost small" type="button" id="coCsv"><svg class="ic"><use href="#i-csv"/></svg>CSV</button>
+      </div>
+    </div>
+    <div class="tbl-wrap reveal" style="--d:.18s"><table class="tbl" id="coTbl"></table></div>
+    <div class="cards" id="cards"></div>
+    <div id="noMatch" hidden>هیچ شرکتی با این فیلتر مطابقت ندارد.</div>
+  </section>
+
+  <section id="welcome">
+    <div class="steps">
+      <div class="step reveal" style="--d:.05s"><span class="num">۱</span><b>جستجو کنید</b><p>کالا یا حوزه فعالیت (مثلاً «ذرت») را بنویسید. جستجوی تازه با یک کلیک در گیت‌هاب اجرا می‌شود و وضعیت اجرای آن زنده نمایش داده می‌شود.</p></div>
+      <div class="step reveal" style="--d:.12s"><span class="num">۲</span><b>نتایج رتبه‌بندی‌شده</b><p>شرکت‌های فعال رسمیو بر پایه سرمایه ثبتی، تأیید شرکت و تعداد مجوز رتبه می‌گیرند. با کلیک روی هر شرکت، پروفایل کامل آن باز می‌شود.</p></div>
+      <div class="step reveal" style="--d:.19s"><span class="num">۳</span><b>خروجی بگیرید</b><p>نتایج فیلترشده و مرتب‌شده را با یک کلیک به اکسل یا CSV ببرید؛ نشانی، کد پستی، سرمایه و مدیرعامل هم در خروجی هست.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p><b>چطور کار می‌کند؟</b> نتیجه هر جستجو در پایگاه‌داده گیت‌هاب (شاخه db) ذخیره می‌شود؛ جستجوی تکراری بدون اجرای دوباره و بدون توکن باز می‌شود. مرتب‌سازی: سرمایه ثبتی بالاتر، تأییدشده‌تر و دارای مجوز بیشتر. نشانی، کد پستی، هیئت‌مدیره و سهام‌داران فقط برای شرکت‌هایی پر می‌شود که پروفایلشان دریافت شده؛ رسمیو در هر اجرا حدود ۵ پروفایل می‌دهد و با «جستجوی تازه» به‌تدریج تکمیل می‌شود. شماره تلفن در رسمیو وجود ندارد.</p>
+    <p>داده‌ها از <a href="https://rasmio.com" target="_blank" rel="noopener">رسمیو</a> (ثبت شرکت‌ها)؛ این ابزار مستقل است. قفل این صفحه فقط سمت مرورگر است و داده‌های شاخه db عمومی می‌مانند. <a href="https://github.com/alirezahasheminezhad/sherkatyab" target="_blank" rel="noopener">کد منبع</a></p>
+  </footer>
 </main>
+</div>
+
+<div id="scrim"></div>
+<aside id="drawer" role="dialog" aria-modal="true" aria-hidden="true" aria-label="پروفایل شرکت"></aside>
+<div id="toasts" aria-live="polite"></div>
+
 <script>
-const $ = id => document.getElementById(id);
-/* shortcut: client-side lock only (hash in the page); the repo and db branch stay public. Use a private repo for real secrecy. */
+'use strict';
+const $=id=>document.getElementById(id);
+const REPO='alirezahasheminezhad/sherkatyab';
+const RAW='https://raw.githubusercontent.com/'+REPO+'/db/';
+const API='https://api.github.com/repos/'+REPO;
+const RUNS_URL='https://github.com/'+REPO+'/actions/workflows/company-search.yml';
+const TTL_DAYS=7, PAGE_SIZE=60;
+/* client-side lock only (hash in the page); the repo and db branch stay public. Use a private repo for real secrecy. */
 const PASS_HASH='8d535a61860efcb4cc2db3fd8993e97f7d2d8e18170c7714caf6070079c68eb1';
+
+/* ---------- helpers ---------- */
 const sha=async t=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)))].map(b=>b.toString(16).padStart(2,'0')).join('');
-try{ if(localStorage.getItem('sherkatyab_auth')===PASS_HASH) document.body.classList.remove('lock'); }catch{}
-$('lock').onsubmit=async e=>{ e.preventDefault(); const h=await sha($('pw').value);
-  if(h===PASS_HASH){ try{localStorage.setItem('sherkatyab_auth',h);}catch{} document.body.classList.remove('lock'); } else $('pwMsg').textContent='رمز اشتباه است'; };
-const fa = (n,d=0) => isFinite(n) ? n.toLocaleString('fa-IR',{maximumFractionDigits:d}) : '—';
-/* جستجوی شرکت‌ها: دیتابیس روی شاخه‌ی db، اجرا با workflow_dispatch */
-const REPO='alirezahasheminezhad/sherkatyab', RAW='https://raw.githubusercontent.com/'+REPO+'/db/';
-const norm = t => t.replace(/\s+/g,' ').trim().replace(/ي/g,'ی').replace(/ك/g,'ک');
-let coRows=[];
-const rj = async n => { try{ const r=await fetch(RAW+n+'.json?_='+Date.now()); return r.ok ? await r.json() : {}; }catch{ return {}; } };
-function coShow(s,db){
-  coRows = s.ranked.map((id,i)=>{ const c=db[id]||{}, p=c.profile||{};
-    return {'رتبه':i+1,'نام':c.name,'شناسه ملی':id,'مدیرعامل':c.ceo||'','نشانی':p.address||'','کد پستی':p.postal_code||'','سرمایه (ریال)':p.capital_rial||'','تاریخ تأسیس':p.founded||'','تأییدشده':c.verified_by_company?'بله':'','تعداد مجوز':c.license_count||'','محصولات':(c.top_products||[]).join('، '),'خلاصه':c.summary||''}; });
-  const h=Object.keys(coRows[0]);
-  $('coTbl').innerHTML='<tr>'+h.map(k=>'<th>'+k+'</th>').join('')+'</tr>'+coRows.map(r=>'<tr>'+h.map(k=>'<td>'+String(r[k]).replace(/</g,'&lt;')+'</td>').join('')+'</tr>').join('');
-  $('coXls').hidden=false; $('coTag').textContent=fa(s.total)+' شرکت یافت شد · '+fa(coRows.length)+' ذخیره';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fa=(n,d=0)=>(n===null||n===undefined||n===''||!isFinite(n))?'—':Number(n).toLocaleString('fa-IR',{maximumFractionDigits:d});
+const pd=s=>String(s??'').replace(/[0-9]/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
+const enDig=s=>String(s??'').replace(/[۰۱۲۳۴۵۶۷۸۹]/g,d=>String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d))).replace(/[٠١٢٣٤٥٦٧٨٩]/g,d=>String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));
+const norm=t=>enDig(t).replace(/\u200c/g,' ').replace(/ي/g,'ی').replace(/ك/g,'ک').replace(/\s+/g,' ').trim();
+const ic=(n,cls='ic')=>`<svg class="${cls}" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+const faDate=ts=>new Intl.DateTimeFormat('fa-IR',{dateStyle:'medium'}).format(new Date(ts*1000));
+function relTime(ts){
+  const d=Math.max(0,Math.floor((Date.now()/1000-ts)/86400));
+  if(d===0)return 'امروز';
+  if(d===1)return 'دیروز';
+  if(d<30)return fa(d)+' روز پیش';
+  return faDate(ts);
+}
+function capHuman(n){
+  if(!isFinite(n)||n<=0)return null;
+  if(n>=1e12)return fa(n/1e12,1)+' هزار میلیارد';
+  if(n>=1e9)return fa(n/1e9,1)+' میلیارد';
+  if(n>=1e6)return fa(n/1e6,1)+' میلیون';
+  return fa(n);
+}
+const foundedYear=s=>{const m=enDig(s||'').match(/\d{4}/);return m?+m[0]:null;};
+async function rj(name){
+  try{const r=await fetch(RAW+name+'.json?_='+Date.now());return r.ok?await r.json():{};}catch{return {};}
+}
+function toast(text,kind='ok'){
+  const el=document.createElement('div');
+  el.className='toast '+kind;
+  el.innerHTML=ic(kind==='ok'?'ok':kind==='warn'?'warn':'info')+`<span>${esc(text)}</span>`;
+  $('toasts').appendChild(el);
+  setTimeout(()=>{el.classList.add('out');setTimeout(()=>el.remove(),260);},3400);
+}
+async function copyText(t,label){
+  try{await navigator.clipboard.writeText(t);}catch{
+    const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();
+    try{document.execCommand('copy');}catch{}ta.remove();
+  }
+  toast((label||'کپی شد')+' — '+t,'ok');
+}
+
+/* ---------- state ---------- */
+const S={db:{},searches:{},kw:null,search:null,rows:[],view:[],sort:{key:'rank',dir:1},filter:'',statFilter:null,running:false,timers:[],run:null,ready:false};
+
+/* ---------- theme ---------- */
+function setTheme(t){
+  document.documentElement.dataset.theme=t;
+  try{localStorage.setItem('sherkatyab_theme',t);}catch{}
+  $('themeBtn').innerHTML=ic(t==='dark'?'sun':'moon');
+  document.querySelector('meta[name="theme-color"]').content=t==='dark'?'#0d1514':'#0d3f3a';
+}
+$('themeBtn').onclick=()=>setTheme(document.documentElement.dataset.theme==='dark'?'light':'dark');
+setTheme((()=>{try{return localStorage.getItem('sherkatyab_theme')||'light';}catch{return 'light';}})());
+
+/* ---------- lock ---------- */
+try{if(localStorage.getItem('sherkatyab_auth')===PASS_HASH)document.body.classList.remove('lock');}catch{}
+$('pwEye').onclick=()=>{const i=$('pw');i.type=i.type==='password'?'text':'password';$('pwEye').innerHTML=ic(i.type==='password'?'eye':'eyeoff');};
+$('lockForm').onsubmit=async e=>{
+  e.preventDefault();
+  const h=await sha($('pw').value);
+  if(h===PASS_HASH){
+    try{localStorage.setItem('sherkatyab_auth',h);}catch{}
+    document.body.classList.remove('lock');$('pw').value='';$('pwMsg').textContent='';init();
+  }else{
+    $('pwMsg').textContent='رمز اشتباه است';
+    const c=document.querySelector('.lock-card');c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake');
+    $('pw').select();
+  }
+};
+$('logoutBtn').onclick=()=>{
+  try{localStorage.removeItem('sherkatyab_auth');}catch{}
+  stopPolling();setRunning(false);hideStatus();document.body.classList.add('lock');setTimeout(()=>$('pw').focus(),60);
+};
+
+/* ---------- token ---------- */
+function tokSync(){
+  const v=$('coTok').value.trim();
+  $('tokDot').classList.toggle('on',!!v);
+}
+try{$('coTok').value=localStorage.getItem('bazarban_gh')||'';}catch{}
+tokSync();
+$('coTok').addEventListener('input',()=>{try{localStorage.setItem('bazarban_gh',$('coTok').value.trim());}catch{}tokSync();});
+$('tokEye').onclick=()=>{const i=$('coTok');i.type=i.type==='password'?'text':'password';$('tokEye').innerHTML=ic(i.type==='password'?'eye':'eyeoff');};
+$('tokClear').onclick=()=>{$('coTok').value='';try{localStorage.removeItem('bazarban_gh');}catch{}tokSync();toast('توکن از این مرورگر پاک شد','warn');};
+
+/* ---------- init & chips ---------- */
+let dbPromise=null;
+async function init(){
+  if(S.ready)return;S.ready=true;
+  $('chipsWrap').hidden=false;
+  $('chips').innerHTML='<span class="chips-note">در حال بارگذاری پایگاه‌داده…</span>';
+  dbPromise=rj('companies').then(db=>{if(!Object.keys(S.db).length)S.db=db||{};return S.db;});
+  S.searches=await rj('searches')||{};
+  renderChips();
+  let kw=null;
+  try{kw=decodeURIComponent(location.hash.slice(1))||localStorage.getItem('sherkatyab_last');}catch{}
+  if(kw&&S.searches[kw]&&S.searches[kw].ranked)showSearch(kw,S.searches[kw],false);
+}
+function renderChips(){
+  const list=Object.values(S.searches).filter(s=>s&&s.ranked&&s.ranked.length).sort((a,b)=>b.at-a.at);
+  $('chipsWrap').hidden=!list.length;
+  $('chips').innerHTML=list.map(s=>{
+    const stale=(Date.now()/1000-s.at)>TTL_DAYS*86400;
+    return `<button type="button" class="chip${s.keyword===S.kw?' active':''}" data-kw="${esc(s.keyword)}" title="${esc(faDate(s.at))} — ${stale?'قدیمی؛ جستجوی تازه پیشنهاد می‌شود':'به‌روز'}">
+      <i class="dot${stale?' stale':''}"></i><b>${esc(s.keyword)}</b><span class="n">${fa(s.ranked.length)}</span></button>`;
+  }).join('');
+  $('chips').querySelectorAll('.chip').forEach(c=>c.onclick=()=>{
+    const kw=c.dataset.kw;$('coKw').value=kw;showSearch(kw,S.searches[kw],true);
+  });
+}
+
+/* ---------- rows & view ---------- */
+function buildRows(s){
+  const ids=s.ranked&&s.ranked.length?s.ranked:(s.ids||[]);
+  return ids.map((id,i)=>{
+    const c=S.db[id]||{},p=c.profile||{};
+    return {rank:i+1,id,name:c.name||p.name||id,ceo:c.ceo||'',summary:c.summary||'',
+      address:p.address||'',postal:p.postal_code||'',factory:p.factory_address||'',
+      capital:p.capital_rial||null,founded:p.founded||'',year:foundedYear(p.founded),
+      legal:p.legal_form||'',status:p.status||'',verified:!!c.verified_by_company,
+      licenses:c.license_count||0,licenseList:c.licenses||[],products:c.top_products||[],
+      categories:c.top_categories||[],hasProfile:!!c.profile,profile:p,raw:c};
+  });
+}
+function applyView(){
+  const f=norm(S.filter).toLowerCase(),fd=enDig(S.filter).toLowerCase();
+  let v=S.rows.filter(r=>{
+    if(S.statFilter==='verified'&&!r.verified)return false;
+    if(S.statFilter==='profile'&&!r.hasProfile)return false;
+    if(S.statFilter==='licensed'&&!r.licenses)return false;
+    if(!f)return true;
+    const hay=norm([r.name,r.ceo,r.summary,r.address,r.products.join(' '),r.categories.join(' '),r.id].join(' ')).toLowerCase();
+    return hay.includes(f)||enDig(r.id).includes(fd);
+  });
+  const {key,dir}=S.sort;
+  const cmp={
+    rank:(a,b)=>a.rank-b.rank,
+    name:(a,b)=>a.name.localeCompare(b.name,'fa'),
+    capital:(a,b)=>(a.capital||0)-(b.capital||0),
+    licenses:(a,b)=>a.licenses-b.licenses,
+    founded:(a,b)=>(a.year||9999)-(b.year||9999),
+  }[key]||((a,b)=>a.rank-b.rank);
+  v.sort((a,b)=>dir*cmp(a,b)||(a.rank-b.rank));
+  S.view=v;
+  renderTable();renderCards();
+  $('coCount').textContent=fa(v.length)+' از '+fa(S.rows.length)+' شرکت';
+  $('noMatch').hidden=!!v.length||!S.rows.length;
+  document.querySelector('.tbl-wrap').style.display=v.length?'':'none';
+  $('cards').style.display=v.length?'':'none';
+}
+
+/* ---------- table & cards ---------- */
+const COLS=[
+  {key:'rank',label:'رتبه',sortable:true},
+  {key:'name',label:'شرکت',sortable:true},
+  {key:'id',label:'شناسه ملی'},
+  {key:'ceo',label:'مدیرعامل'},
+  {key:'capital',label:'سرمایه (ریال)',sortable:true},
+  {key:'founded',label:'تأسیس',sortable:true},
+  {key:'licenses',label:'مجوز',sortable:true},
+  {key:'profile',label:'پروفایل'},
+];
+function renderTable(){
+  const th=COLS.map(c=>{
+    const sorted=S.sort.key===c.key;
+    return `<th scope="col" class="${c.sortable?'sortable':''}${sorted?' sorted':''}" data-key="${c.key}">${c.label}${c.sortable?`<span class="arr">${sorted?(S.sort.dir===1?'▲':'▼'):'↕'}</span>`:''}</th>`;
+  }).join('');
+  const trs=S.view.map(r=>{
+    const ch=capHuman(r.capital);
+    return `<tr data-id="${esc(r.id)}" tabindex="0" aria-label="${esc(r.name)}">
+      <td><span class="rank${r.rank<=3?' top':''}">${fa(r.rank)}</span></td>
+      <td><div class="co-name">${esc(r.name)}${r.verified?`<span class="badge ok" title="پروفایل توسط خود شرکت تأیید شده">${ic('check')}تأییدشده</span>`:''}</div>${r.summary?`<div class="co-sum">${esc(r.summary)}</div>`:''}</td>
+      <td class="nid">${pd(r.id)}</td>
+      <td>${esc(r.ceo)||'—'}</td>
+      <td>${ch?`<span class="cap" title="${fa(r.capital)} ریال">${ch}<small>${fa(r.capital)} ریال</small></span>`:'<span class="nid">—</span>'}</td>
+      <td class="nid">${r.founded?pd(r.founded):'—'}</td>
+      <td>${r.licenses?`<span class="badge lic">${ic('cert')}${fa(r.licenses)}</span>`:'—'}</td>
+      <td><span class="prof${r.hasProfile?' full':''}"><i></i>${r.hasProfile?'کامل':'پایه'}</span></td>
+    </tr>`;
+  }).join('');
+  $('coTbl').innerHTML=`<thead><tr>${th}</tr></thead><tbody>${trs}</tbody>`;
+  $('coTbl').querySelectorAll('th.sortable').forEach(h=>h.onclick=()=>{
+    const k=h.dataset.key;
+    if(S.sort.key===k)S.sort.dir*=-1;else S.sort={key:k,dir:k==='name'?1:-1};
+    syncSortSelect();applyView();
+  });
+  $('coTbl').querySelectorAll('tbody tr').forEach(tr=>{
+    tr.onclick=()=>openDrawer(tr.dataset.id);
+    tr.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openDrawer(tr.dataset.id);}};
+  });
+}
+function renderCards(){
+  $('cards').innerHTML=S.view.map(r=>{
+    const ch=capHuman(r.capital);
+    return `<div class="card" data-id="${esc(r.id)}" tabindex="0" role="button" aria-label="${esc(r.name)}">
+      <div class="top"><span class="rank${r.rank<=3?' top':''}">${fa(r.rank)}</span>
+        <div class="co-name" style="flex:1">${esc(r.name)}</div>
+        <span class="prof${r.hasProfile?' full':''}"><i></i></span></div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">${r.verified?`<span class="badge ok">${ic('check')}تأییدشده</span>`:''}${r.licenses?`<span class="badge lic">${ic('cert')}${fa(r.licenses)} مجوز</span>`:''}${r.legal?`<span class="badge form">${esc(r.legal)}</span>`:''}</div>
+      <div class="meta">${r.ceo?`<span>مدیرعامل: <b>${esc(r.ceo)}</b></span>`:''}${ch?`<span>سرمایه: <b>${ch} ریال</b></span>`:''}${r.year?`<span>تأسیس: <b>${fa(r.year)}</b></span>`:''}</div>
+    </div>`;
+  }).join('');
+  $('cards').querySelectorAll('.card').forEach(c=>{
+    c.onclick=()=>openDrawer(c.dataset.id);
+    c.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openDrawer(c.dataset.id);}};
+  });
+}
+function syncSortSelect(){
+  const v=S.sort.key+':'+S.sort.dir;
+  const sel=$('coSort');
+  if([...sel.options].some(o=>o.value===v))sel.value=v;else sel.selectedIndex=-1;
+}
+
+/* ---------- stats ---------- */
+function renderStats(){
+  const n={total:S.search.total||S.rows.length,stored:S.rows.length,
+    verified:S.rows.filter(r=>r.verified).length,
+    profile:S.rows.filter(r=>r.hasProfile).length,
+    licensed:S.rows.filter(r=>r.licenses>0).length};
+  const items=[
+    {k:'total',icon:'bld',cls:'t',num:n.total,label:'شرکت یافت‌شده'},
+    {k:'stored',icon:'chart',cls:'s',num:n.stored,label:'در پایگاه‌داده'},
+    {k:'verified',icon:'check',cls:'p',num:n.verified,label:'تأییدشده',filter:'verified'},
+    {k:'profile',icon:'case',cls:'l',num:n.profile,label:'پروفایل کامل',filter:'profile'},
+    {k:'licensed',icon:'cert',cls:'r',num:n.licensed,label:'دارای مجوز',filter:'licensed'},
+  ];
+  $('stats').innerHTML=items.map(i=>`<div class="stat${i.filter?' clickable':''}${S.statFilter===i.filter&&i.filter?' on':''}" data-f="${i.filter||''}" ${i.filter?'role="button" tabindex="0" title="فیلتر: فقط '+i.label+'"':''}>
+    <span class="si ${i.cls}">${ic(i.icon)}</span><div><b>${fa(i.num)}</b><span>${i.label}</span></div></div>`).join('');
+  $('stats').querySelectorAll('.stat.clickable').forEach(el=>{
+    const act=()=>{S.statFilter=S.statFilter===el.dataset.f?null:el.dataset.f;renderStats();applyView();};
+    el.onclick=act;el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();act();}};
+  });
+}
+
+/* ---------- show search ---------- */
+async function showSearch(kw,s,scroll){
+  if(dbPromise)await dbPromise;
+  S.kw=kw;S.search=s;S.rows=buildRows(s);S.statFilter=null;S.filter='';$('coFilter').value='';
+  S.sort={key:'rank',dir:1};syncSortSelect();
+  $('resKw').textContent=kw;
+  const stale=(Date.now()/1000-s.at)>TTL_DAYS*86400;
+  $('resAge').className='age'+(stale?' stale':'');
+  $('resAge').innerHTML=`<i class="dot"></i>به‌روزرسانی: ${relTime(s.at)}${stale?' — جستجوی تازه پیشنهاد می‌شود':''}`;
+  $('results').hidden=false;$('welcome').hidden=true;
+  renderStats();applyView();renderChips();
+  try{localStorage.setItem('sherkatyab_last',kw);history.replaceState(null,'','#'+encodeURIComponent(kw));}catch{}
+  if(scroll)$('results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ---------- drawer ---------- */
+let lastFocus=null;
+function fact(k,v,copy){
+  if(v===null||v===undefined||v==='')return '';
+  return `<div class="fact"><span class="k">${k}</span><span class="v">${esc(v)}${copy?`<button class="copy" data-copy="${esc(copy)}" data-label="${k}" aria-label="کپی ${k}">${ic('copy')}</button>`:''}</span></div>`;
+}
+function addrBlock(k,v,icon){
+  if(!v)return '';
+  return `<div class="addr"><span class="k"><span>${k}</span><button data-copy="${esc(v)}" data-label="${k}">${ic('copy')}کپی</button></span><span>${esc(v)}</span></div>`;
+}
+function miniTable(rows,cols){
+  if(!rows||!rows.length)return '';
+  const head=cols.map(c=>`<th>${c.label}</th>`).join('');
+  const body=rows.map(r=>`<tr>${cols.map(c=>{
+    let v=r[c.key];if(v===null||v===undefined||v==='')return '<td>—</td>';
+    if(c.money)v=capHuman(v)||fa(v);
+    else v=pd(v);
+    return `<td class="${c.cls||''}">${esc(v)}</td>`;
+  }).join('')}</tr>`).join('');
+  return `<table class="mini"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
+}
+function sec(icon,title,body){
+  if(!body)return '';
+  return `<section class="dw-sec"><h4>${ic(icon)}${title}</h4>${body}</section>`;
+}
+function openDrawer(id){
+  const r=S.rows.find(x=>x.id===id);if(!r)return;
+  const p=r.profile,c=r.raw;
+  const ch=capHuman(r.capital);
+  const badges=[
+    r.verified?`<span class="badge ok">${ic('check')}تأییدشده توسط شرکت</span>`:'',
+    r.legal?`<span class="badge form">${esc(r.legal)}</span>`:'',
+    r.status?`<span class="badge form">${esc(r.status)}</span>`:'',
+    r.licenses?`<span class="badge form">${fa(r.licenses)} مجوز</span>`:'',
+  ].join('');
+  const facts=[
+    fact('شناسه ملی',pd(r.id),r.id),
+    fact('شماره ثبت',p.registration_no?pd(p.registration_no):'',p.registration_no),
+    fact('کد اقتصادی',p.economic_code?pd(p.economic_code):'',p.economic_code),
+    fact('مدیرعامل',r.ceo),
+    fact('تاریخ تأسیس',r.founded?pd(r.founded):''),
+    fact('سرمایه ثبتی',ch?ch+' ریال':''),
+    fact('نوع شرکت',r.legal),
+    fact('وضعیت',r.status),
+    fact('آخرین آگهی روزنامه رسمی',p.last_gazette_ad?pd(p.last_gazette_ad):''),
+    fact('صنعت',p.industry||''),
+  ].join('');
+  const boardCols=[{key:'name',label:'نام'},{key:'position',label:'سمت',cls:'pos'},{key:'start',label:'شروع'},{key:'end',label:'پایان'}];
+  const audCols=[{key:'name',label:'نام'},{key:'position',label:'سمت',cls:'pos'},{key:'kind',label:'نوع'},{key:'fiscal_year',label:'سال مالی'}];
+  const shCols=[{key:'shareholder',label:'سهام‌دار'},{key:'shares',label:'تعداد سهم'},{key:'percent',label:'درصد'},{key:'value_rial',label:'ارزش (ریال)',money:true}];
+  const holdCols=[{key:'holding',label:'شرکت و سهم'},{key:'shares',label:'تعداد سهم'},{key:'percent',label:'درصد'},{key:'value_rial',label:'ارزش (ریال)',money:true}];
+  const licCols=[{key:'license',label:'مجوز'},{key:'issuer',label:'مرجع صادرکننده',cls:'pos'},{key:'start',label:'شروع'}];
+  const capCols=[{key:'capital_rial',label:'سرمایه (ریال)',money:true},{key:'type',label:'نوع'},{key:'source',label:'محل تغییر',cls:'pos'},{key:'registered',label:'تاریخ ثبت'}];
+  const conCols=[{key:'title',label:'عنوان قرارداد'},{key:'employer',label:'کارفرما',cls:'pos'},{key:'amount_rial',label:'مبلغ (ریال)',money:true}];
+  const finCols=[{key:'fiscal_year_end',label:'سال مالی'},{key:'audit',label:'وضعیت حسابرسی',cls:'pos'},{key:'published',label:'انتشار'}];
+  const patCols=[{key:'title',label:'عنوان اختراع یا طرح'},{key:'registered',label:'تاریخ ثبت'}];
+  const rowsOf=t=>t&&t.rows?t.rows:null;
+  const licList=(p.licenses&&rowsOf(p.licenses))?miniTable(rowsOf(p.licenses),licCols)
+    :(r.licenseList.length?`<div class="taglist">${r.licenseList.map(l=>`<span class="tag lic">${esc(l)}</span>`).join('')}</div>`:'');
+  const brands=(p.brands&&p.brands.length)?`<div class="taglist">${p.brands.map(b=>`<span class="tag brand">${esc(b.name||'')}${b.registered?' · '+pd(b.registered):''}</span>`).join('')}</div>`:'';
+  const ads=(p.recent_ads&&p.recent_ads.length)?p.recent_ads.map(a=>`<div class="adcard">
+      <span class="t">${esc(a.title||'آگهی')}</span>
+      <span class="m">${a.source?`<span>${esc(a.source)}</span>`:''}${a.published?`<span>چاپ: ${pd(a.published)}</span>`:''}${a.registered?`<span>ثبت: ${pd(a.registered)}</span>`:''}</span>
+      ${a.text?`<span class="x">${esc(a.text.slice(0,220))}${a.text.length>220?'…':''}</span>`:''}
+      ${a.ad_id?`<a href="https://rasmio.com/News/${esc(a.ad_id)}/" target="_blank" rel="noopener">متن کامل آگهی ${ic('ext')}</a>`:''}
+    </div>`).join(''):'';
+  const activity=p.activity?`<div class="activity clamp" id="dwAct">${esc(p.activity)}</div><button class="morelink" id="dwActMore">نمایش کامل موضوع فعالیت</button>`:'';
+  const prods=r.products.length?`<ul class="prodlist">${r.products.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:'';
+  const cats=r.categories.length?`<div class="taglist">${r.categories.map(x=>`<span class="tag">${esc(x)}</span>`).join('')}</div>`:'';
+  $('drawer').innerHTML=`
+    <div class="dw-head">
+      <div class="row"><h3>${esc(r.name)}</h3><button class="iconbtn close" id="dwClose" aria-label="بستن">${ic('x')}</button></div>
+      <div class="dw-badges">${badges}</div>
+      <a class="dw-link" href="https://rasmio.com/company/${esc(r.id)}" target="_blank" rel="noopener">${ic('ext')}مشاهده در رسمیو</a>
+    </div>
+    <div class="dw-body">
+      ${!r.hasProfile?`<div class="note">${ic('info')}<span>پروفایل کامل این شرکت هنوز دریافت نشده است. با «جستجوی تازه» (↻)، پروفایل شرکت‌های برتر به‌تدریج تکمیل می‌شود — رسمیو در هر اجرا حدود ۵ پروفایل می‌دهد.</span></div>`:''}
+      ${sec('bld','اطلاعات ثبتی',`<div class="facts">${facts}</div>`)}
+      ${sec('pin','نشانی‌ها',addrBlock('نشانی ثبتی',r.address)+addrBlock('کد پستی',r.postal?pd(r.postal):'')+addrBlock('نشانی کارخانه',r.factory))}
+      ${sec('scroll','موضوع فعالیت',activity)}
+      ${sec('users','هیئت مدیره',miniTable(rowsOf(p.board),boardCols))}
+      ${sec('users','سایر اعضا',miniTable(rowsOf(p.other_officers),boardCols))}
+      ${sec('check','بازرسان',miniTable(rowsOf(p.auditors),audCols))}
+      ${sec('hand','دارندگان حق امضا',p.signature_rule?`<div class="activity">${esc(p.signature_rule)}</div>`:'')}
+      ${sec('coins','سهام‌داران',miniTable(rowsOf(p.shareholders),shCols))}
+      ${sec('chart','سبد سهام',miniTable(rowsOf(p.stock_portfolio),holdCols))}
+      ${sec('cert','مجوزها و گواهی‌ها',licList)}
+      ${sec('tag','برندها',brands)}
+      ${sec('spark','اختراعات و طرح‌ها',miniTable(rowsOf(p.patents_and_designs),patCols))}
+      ${sec('coins','تغییرات سرمایه',miniTable(rowsOf(p.capital_changes),capCols))}
+      ${sec('case','قراردادهای مهم',miniTable(rowsOf(p.contracts),conCols))}
+      ${sec('chart','صورت‌های مالی',miniTable(rowsOf(p.financial_statements),finCols))}
+      ${sec('scroll','آگهی‌های اخیر',ads)}
+      ${sec('tag','محصولات شاخص',prods)}
+      ${sec('bld','دسته‌بندی‌ها',cats)}
+    </div>`;
+  $('dwClose').onclick=closeDrawer;
+  $('drawer').querySelectorAll('[data-copy]').forEach(b=>b.onclick=()=>copyText(b.dataset.copy,b.dataset.label));
+  const more=$('dwActMore');
+  if(more)more.onclick=()=>{const a=$('dwAct');a.classList.toggle('clamp');more.textContent=a.classList.contains('clamp')?'نمایش کامل موضوع فعالیت':'بستن متن کامل';};
+  lastFocus=document.activeElement;
+  $('drawer').classList.add('open');$('scrim').classList.add('show');
+  document.body.style.overflow='hidden';
+  $('drawer').setAttribute('aria-hidden','false');
+  setTimeout(()=>$('dwClose').focus(),80);
+}
+function closeDrawer(){
+  $('drawer').classList.remove('open');$('scrim').classList.remove('show');
+  document.body.style.overflow='';
+  $('drawer').setAttribute('aria-hidden','true');
+  if(lastFocus&&lastFocus.focus)lastFocus.focus();
+}
+$('scrim').onclick=closeDrawer;
+document.addEventListener('keydown',e=>{
+  const open=$('drawer').classList.contains('open');
+  if(e.key==='Escape'&&open){closeDrawer();return;}
+  if(e.key==='Tab'&&open){
+    const f=[...$('drawer').querySelectorAll('button,a[href],input,select,[tabindex]:not([tabindex="-1"])')].filter(el=>!el.disabled&&el.getClientRects().length);
+    if(!f.length)return;
+    const first=f[0],last=f[f.length-1];
+    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+  }
+});
+
+/* ---------- status card ---------- */
+let runT0=null,elapsedTimer=null;
+function setStatus(kind,title,sub,extra){
+  const el=$('statusCard');
+  el.hidden=false;el.className=kind==='run'?'':kind;
+  el.innerHTML=(kind==='run'?'<span class="spin"></span>':`<span class="st-icon">${ic(kind==='error'?'warn':'info')}</span>`)
+    +`<div class="st-body"><span class="st-title">${esc(title)}</span>${sub?`<span class="st-sub">${sub}</span>`:''}</div>`
+    +(kind==='run'?`<span id="elapsed">۰۰:۰۰</span><button class="btn ghost small" type="button" id="stCancel">توقف</button>`:'')
+    +(extra||'');
+  const c=$('stCancel');if(c)c.onclick=cancelSearch;
+  if(kind==='run'){
+    if(!runT0)runT0=Date.now();
+    const tick=()=>{const e=$('elapsed');if(!e)return;const s=Math.floor((Date.now()-runT0)/1000);
+      e.textContent=pd(String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'));};
+    tick();
+    if(!elapsedTimer)elapsedTimer=setInterval(tick,1000);
+  }else{clearInterval(elapsedTimer);elapsedTimer=null;runT0=null;}
+}
+function hideStatus(){clearInterval(elapsedTimer);elapsedTimer=null;runT0=null;$('statusCard').hidden=true;}
+
+/* ---------- search flow ---------- */
+function setRunning(on){
+  S.running=on;
+  $('coGo').disabled=on;$('coRef').disabled=on;$('coKw').disabled=on;$('coPages').disabled=on;
+}
+function stopPolling(){
+  S.timers.forEach(t=>clearInterval(t));S.timers=[];S.run=null;
+}
+function cancelSearch(){
+  const run=S.run,tok=$('coTok').value.trim();
+  stopPolling();setRunning(false);
+  if(run&&tok){fetch(API+'/actions/runs/'+run.id+'/cancel',{method:'POST',headers:{Authorization:'Bearer '+tok,Accept:'application/vnd.github+json'}}).catch(()=>{});}
+  setStatus('warn','جستجو متوقف شد','درخواست اجرا لغو شد؛ هر زمان بخواهید دوباره جستجو کنید.');
+  toast('جستجو متوقف شد','warn');
 }
 async function coSearch(refresh){
-  const kw=norm($('coKw').value), tok=$('coTok').value.trim(), msg=t=>$('coMsg').textContent=t;
-  if(!kw) return;
-  if(!refresh){ const s=(await rj('searches'))[kw]; if(s&&s.ranked){ coShow(s,await rj('companies')); msg('از پایگاه‌داده'); return; } }
-  if(!tok){ msg('این کلمه هنوز جستجو نشده؛ برای اجرا توکن گیت‌هاب (دسترسی Actions: write) را وارد کن.'); return; }
-  try{ localStorage.setItem('bazarban_gh',tok); }catch{}
-  const r=await fetch('https://api.github.com/repos/'+REPO+'/actions/workflows/company-search.yml/dispatches',{method:'POST',headers:{Authorization:'Bearer '+tok,Accept:'application/vnd.github+json'},body:JSON.stringify({ref:'main',inputs:{keyword:kw,refresh:String(!!refresh)}})});
-  if(r.status!==204){ msg('اجرای جستجو ناموفق بود ('+r.status+'): توکن یا دسترسی را بررسی کن.'); return; }
-  const t0=Date.now(), was=refresh?((await rj('searches'))[kw]||{}).at:null;
-  msg('جستجو در حال اجراست… (معمولاً ۱ تا ۳ دقیقه)');
-  const iv=setInterval(async()=>{
+  if(S.running)return;
+  const kw=norm($('coKw').value);
+  if(!kw){toast('عبارت جستجو را وارد کنید','warn');$('coKw').focus();return;}
+  $('coKw').value=kw;
+  hideStatus();
+  if(!refresh){
+    const s=S.searches[kw];
+    if(s&&s.ranked&&s.ranked.length){await showSearch(kw,s,true);toast('از پایگاه‌داده بارگذاری شد','ok');return;}
+  }
+  const tok=$('coTok').value.trim();
+  if(!tok){
+    $('tokenBox').open=true;
+    setStatus('warn','این عبارت هنوز جستجو نشده است','برای اجرای جستجوی تازه، توکن گیت‌هاب (دسترسی Actions: write) را در کادر بالا وارد کنید. جستجوهای ذخیره‌شده بدون توکن باز می‌شوند.');
+    $('coTok').focus();return;
+  }
+  try{localStorage.setItem('bazarban_gh',tok);}catch{}
+  setRunning(true);
+  runT0=null;
+  setStatus('run','در حال ارسال درخواست به گیت‌هاب…','');
+  let r;
+  try{
+    r=await fetch(API+'/actions/workflows/company-search.yml/dispatches',{method:'POST',
+      headers:{Authorization:'Bearer '+tok,Accept:'application/vnd.github+json'},
+      body:JSON.stringify({ref:'main',inputs:{keyword:kw,refresh:String(!!refresh),pages:$('coPages').value}})});
+  }catch(e){r=null;}
+  if(!r||r.status!==204){
+    setRunning(false);
+    const code=r?r.status:0;
+    const why=code===401?'توکن نامعتبر یا منقضی است.':code===403?'دسترسی توکن کافی نیست (Actions: read/write لازم است).':code===404?'توکن به این مخزن دسترسی ندارد.':'اتصال به گیت‌هاب برقرار نشد ('+pd(code)+').';
+    setStatus('error','اجرای جستجو ناموفق بود',why+' <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">ساخت توکن تازه</a>');
+    return;
+  }
+  const t0=Date.now(),was=(S.searches[kw]||{}).at||null;
+  S.run=null;S.lastPhase=null;
+  setStatus('run','جستجو در صف اجرای گیت‌هاب است…','معمولاً ۱ تا ۳ دقیقه طول می‌کشد. <a href="'+RUNS_URL+'" target="_blank" rel="noopener">مشاهده اجراها</a>');
+  const poll=setInterval(async()=>{
+    if(Date.now()-t0>16*60e3){
+      stopPolling();setRunning(false);
+      setStatus('error','نتیجه در زمان مورد انتظار نرسید','لاگ اجرا را در <a href="'+RUNS_URL+'" target="_blank" rel="noopener">تب Actions گیت‌هاب</a> ببینید.');
+      return;
+    }
+    /* track the actual workflow run when the token allows it */
+    if(!S.run||S.run.status!=='completed'){
+      try{
+        const rr=await fetch(API+'/actions/runs?event=workflow_dispatch&per_page=10',{headers:{Authorization:'Bearer '+tok,Accept:'application/vnd.github+json'}});
+        if(rr.ok){
+          const runs=(await rr.json()).workflow_runs||[];
+          const run=runs.find(x=>(x.path||'').includes('company-search')&&new Date(x.created_at).getTime()>=t0-120000);
+          if(run){
+            S.run=run;
+            const link=` <a href="${esc(run.html_url)}" target="_blank" rel="noopener">مشاهده اجرای زنده</a>`;
+            if(run.status==='completed'){
+              if(run.conclusion==='success'){
+                const s=(await rj('searches'))[kw];
+                if(s&&s.ranked&&s.at!==was){await finishSearch(kw);return;}
+              }else{
+                stopPolling();setRunning(false);
+                setStatus('error','اجرای جستجو در گیت‌هاب ناموفق تمام شد',
+                  (run.conclusion==='cancelled'?'اجرا لغو شد.':'خطا در اجرا — احتمالاً محدودیت رسمیو یا مشکل شبکه.')+' <a href="'+esc(run.html_url)+'" target="_blank" rel="noopener">مشاهده لاگ</a>');
+                return;
+              }
+            }else{
+              const phase=run.status==='queued'?'queued':'running';
+              if(S.lastPhase!==phase+run.id){
+                S.lastPhase=phase+run.id;
+                setStatus('run',phase==='queued'?'جستجو در صف اجرای گیت‌هاب است…':'در حال جستجو در رسمیو و دریافت پروفایل‌ها…','معمولاً ۱ تا ۳ دقیقه طول می‌کشد.'+link);
+              }
+            }
+          }
+        }
+      }catch{}
+    }
+    /* the db branch is the source of truth — check it regardless of the API */
     const s=(await rj('searches'))[kw];
-    if(s&&s.ranked&&(!refresh||s.at!==was)){ clearInterval(iv); coShow(s,await rj('companies')); msg('انجام شد'); }
-    else if(Date.now()-t0>12*60e3){ clearInterval(iv); msg('نتیجه نیامد؛ لاگ اجرا را در تب Actions گیت‌هاب ببین.'); }
-  },15000);
+    if(s&&s.ranked&&s.ranked.length&&(!refresh||s.at!==was)&&s.at!==was){await finishSearch(kw);}
+  },10000);
+  S.timers=[poll];
 }
-$('coGo').onclick=()=>coSearch(false); $('coRef').onclick=()=>coSearch(true);
-$('coKw').onkeydown=e=>{ if(e.key==='Enter') coSearch(false); };
-try{ $('coTok').value=localStorage.getItem('bazarban_gh')||''; }catch{}
-$('coXls').onclick=async()=>{
-  if(!window.XLSX){ await new Promise((ok,no)=>{ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'; s.onload=ok; s.onerror=no; document.head.appendChild(s); }); }
-  const wb=XLSX.utils.book_new(), ws=XLSX.utils.json_to_sheet(coRows); wb.Workbook={Views:[{RTL:true}]};
-  XLSX.utils.book_append_sheet(wb,ws,'شرکت‌ها'); XLSX.writeFile(wb,'companies-'+norm($('coKw').value)+'.xlsx');
+async function finishSearch(kw){
+  stopPolling();
+  const [searches,db]=await Promise.all([rj('searches'),rj('companies')]);
+  S.searches=searches||S.searches;S.db=db||S.db;
+  setRunning(false);hideStatus();
+  const s=S.searches[kw];
+  if(s&&s.ranked){showSearch(kw,s,true);toast('جستجو کامل شد و در پایگاه‌داده ذخیره شد','ok');}
+  else setStatus('error','نتیجه خوانده نشد','دوباره تلاش کنید یا لاگ را در <a href="'+RUNS_URL+'" target="_blank" rel="noopener">تب Actions</a> ببینید.');
+}
+$('searchForm').onsubmit=e=>{e.preventDefault();coSearch(false);};
+$('coRef').onclick=()=>{
+  const kw=norm($('coKw').value);
+  if(!kw){toast('برای جستجوی تازه، اول عبارت را وارد کنید','warn');$('coKw').focus();return;}
+  coSearch(true);
 };
-</script></body></html>
+$('coFilter').addEventListener('input',()=>{S.filter=$('coFilter').value;applyView();});
+$('coSort').onchange=()=>{const [key,dir]=$('coSort').value.split(':');S.sort={key,dir:+dir};applyView();};
+
+/* ---------- export ---------- */
+const EXPORT_COLS=[
+  ['رتبه',r=>r.rank],['نام',r=>r.name],['شناسه ملی',r=>r.id],['مدیرعامل',r=>r.ceo],
+  ['نشانی',r=>r.address],['کد پستی',r=>r.postal],['سرمایه (ریال)',r=>r.capital||''],
+  ['تاریخ تأسیس',r=>r.founded],['نوع شرکت',r=>r.legal],['وضعیت',r=>r.status],
+  ['تأییدشده',r=>r.verified?'بله':''],['تعداد مجوز',r=>r.licenses||''],
+  ['مجوزها',r=>r.licenseList.join('، ')],['محصولات',r=>r.products.join('، ')],
+  ['دسته‌بندی‌ها',r=>r.categories.join('، ')],['خلاصه',r=>r.summary],
+];
+function exportRows(){return S.view.map(r=>Object.fromEntries(EXPORT_COLS.map(([k,f])=>[k,f(r)])));}
+function exportBase(){return 'companies-'+(S.kw||norm($('coKw').value)||'export');}
+$('coCsv').onclick=()=>{
+  if(!S.view.length){toast('نتیجه‌ای برای خروجی نیست','warn');return;}
+  const rows=exportRows(),head=EXPORT_COLS.map(c=>c[0]);
+  const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+  const csv='\uFEFF'+[head.map(q).join(','),...rows.map(r=>head.map(h=>q(r[h])).join(','))].join('\r\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+  a.download=exportBase()+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+  toast('فایل CSV دانلود شد ('+fa(rows.length)+' شرکت)','ok');
+};
+$('coXls').onclick=async()=>{
+  if(!S.view.length){toast('نتیجه‌ای برای خروجی نیست','warn');return;}
+  if(!window.XLSX){
+    toast('در حال آماده‌سازی اکسل…','ok');
+    const loadScript=src=>new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s);});
+    try{await loadScript('xlsx.full.min.js');}
+    catch{
+      try{await loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');}
+      catch{toast('کتابخانه اکسل بارگذاری نشد؛ خروجی CSV گرفته شد','warn');$('coCsv').click();return;}
+    }
+  }
+  const rows=exportRows();
+  const wb=XLSX.utils.book_new(),ws=XLSX.utils.json_to_sheet(rows);
+  ws['!cols']=[{wch:6},{wch:34},{wch:14},{wch:22},{wch:46},{wch:13},{wch:18},{wch:20},{wch:14},{wch:10},{wch:9},{wch:9},{wch:40},{wch:60},{wch:30},{wch:40}];
+  wb.Workbook={Views:[{RTL:true}]};
+  XLSX.utils.book_append_sheet(wb,ws,'شرکت‌ها');
+  XLSX.writeFile(wb,exportBase()+'.xlsx');
+  toast('فایل اکسل دانلود شد ('+fa(rows.length)+' شرکت)','ok');
+};
+
+/* ---------- boot ---------- */
+if(!document.body.classList.contains('lock'))init();
+else setTimeout(()=>$('pw').focus(),80);
+</script>
+</body>
+</html>

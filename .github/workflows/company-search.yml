@@ -9,6 +9,11 @@ on:
       refresh:
         description: Ignore the cache and search again
         default: 'false'
+      pages:
+        description: Search depth (pages of 60 results)
+        type: choice
+        options: ['1', '2', '3', '5', '10']
+        default: '3'
 
 permissions:
   contents: write
@@ -35,7 +40,8 @@ jobs:
         env:
           KW: ${{ inputs.keyword }}
           REFRESH: ${{ inputs.refresh }}
-        run: python company_search.py "$KW" ${{ inputs.refresh == 'true' && '--refresh' || '' }}
+          PAGES: ${{ inputs.pages || '3' }}
+        run: python company_search.py "$KW" --pages "$PAGES" ${{ inputs.refresh == 'true' && '--refresh' || '' }}
       - name: Publish the database (single commit on the db branch)
         run: |
           d=$(mktemp -d) && cp db/*.json "$d" && cd "$d"
