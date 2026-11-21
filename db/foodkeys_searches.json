@@ -1,0 +1,40 @@
+{
+"زردچوبه": {
+"at": 1795293734.23388,
+"banks": [
+"food_importers",
+"wholesale_trade",
+"raw_materials",
+"additives",
+"producers"
+],
+"ids": [
+"food_importers:242",
+"food_importers:443",
+"food_importers:450",
+"wholesale_trade:1600",
+"wholesale_trade:1290",
+"wholesale_trade:1578",
+"wholesale_trade:2972",
+"wholesale_trade:1581",
+"additives:1950",
+"additives:394",
+"additives:1953",
+"additives:1930",
+"additives:1951",
+"additives:1959",
+"producers:5394",
+"producers:5406",
+"producers:16549",
+"producers:14843",
+"producers:14150",
+"producers:14898",
+"producers:12195",
+"producers:13815",
+"producers:12284",
+"producers:7009"
+],
+"keyword": "زردچوبه",
+"total": 24
+}
+}

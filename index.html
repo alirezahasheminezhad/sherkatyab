@@ -369,6 +369,27 @@ footer a{color:var(--teal)}
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
   html{scroll-behavior:auto}
 }
+
+/* ---------- foodkeys section ---------- */
+#fk{display:grid;gap:14px;margin-top:28px}
+#fk h2{font-size:18px;font-weight:800;color:var(--teal-deep)}
+#fk .fk-sub{color:var(--mute);font-size:12.5px;margin-top:-8px}
+.fk-form{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.fk-form input[type=text]{flex:1 1 220px;max-width:340px;background:var(--surface);border:1px solid var(--line2);border-radius:99px;padding:10px 16px;font-size:13px;color:var(--ink)}
+.fk-banks{display:flex;gap:6px 14px;flex-wrap:wrap;font-size:12px;color:var(--mute)}
+.fk-banks label{display:inline-flex;gap:5px;align-items:center;cursor:pointer}
+.fk-chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.fkchip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line2);background:var(--surface);color:var(--ink);border-radius:99px;padding:5px 12px;cursor:pointer;font-size:12.5px}
+.fkchip.active{border-color:var(--teal-bright);background:var(--teal-soft)}
+.fkchip .n{color:var(--mute);font-size:11.5px}.fkchip .x{color:var(--pom);padding:0 2px}
+.conf{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;border-radius:99px;padding:2px 9px;background:var(--saffron-soft);color:var(--saffron-ink);white-space:nowrap}
+.conf.hi{background:var(--pistachio-soft);color:var(--pistachio)}
+.conf.lo{background:var(--surface2);color:var(--mute)}
+.known{display:inline-block;margin-inline-start:6px;font-size:11px;background:var(--lapis-soft);color:var(--lapis);border-radius:99px;padding:1px 8px;font-weight:700}
+.fk-det td{background:var(--surface2);cursor:default}
+.fk-det dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;margin:0;font-size:12.5px}
+.fk-det dt{color:var(--mute)}.fk-det dd{margin:0;word-break:break-word}
+.fk-c{font-size:12px;line-height:1.7;direction:ltr;text-align:right}
 </style>
 </head>
 <body class="lock">
@@ -515,6 +536,30 @@ footer a{color:var(--teal)}
     <div id="noMatch" hidden>هیچ شرکتی با این فیلتر مطابقت ندارد.</div>
   </section>
 
+
+  <section id="fk">
+    <h2>فودکیز — مرجع صنایع غذایی و کشاورزی</h2>
+    <p class="fk-sub">پایگاه جدا از رسمیو: واردکنندگان، عمده‌فروشان، مواد اولیه و تولیدکنندگان همراه با تلفن، ایمیل و نشانی. هر شرکت رسمیو با شرکت‌های فودکیز تطبیق داده می‌شود و درصد اطمینان دارد.</p>
+    <form class="fk-form" id="fkForm">
+      <input type="text" id="fkKw" placeholder="کالا… مثلاً زردچوبه" autocomplete="off" aria-label="عبارت جستجو در فودکیز">
+      <button class="btn primary" type="submit"><svg class="ic"><use href="#i-search"/></svg>جستجو در فودکیز</button>
+      <button class="btn icon" type="button" id="fkRef" title="جستجوی تازه" aria-label="جستجوی تازه"><svg class="ic"><use href="#i-refresh"/></svg></button>
+    </form>
+    <div class="fk-banks" id="fkBanks"></div>
+    <div class="fk-chips" id="fkChips"></div>
+    <div id="fkRes" hidden>
+      <div class="toolbar">
+        <div class="filter-wrap"><svg class="ic"><use href="#i-filter"/></svg><input id="fkFilter" placeholder="فیلتر (نام، محصول، شهر، تلفن…)" autocomplete="off" aria-label="فیلتر فودکیز"></div>
+        <select id="fkSort" aria-label="مرتب‌سازی فودکیز"><option value="rel">مرتبط‌ترین</option><option value="views">پربازدیدترین</option><option value="conf">بیشترین تطبیق رسمیو</option><option value="name">نام</option></select>
+        <label class="chk"><input type="checkbox" id="fkRel" checked>فقط نتایج مرتبط</label>
+        <span class="count" id="fkCount"></span><span class="spacer"></span>
+        <button class="btn teal small" type="button" id="fkXls"><svg class="ic"><use href="#i-xls"/></svg>اکسل</button>
+        <button class="btn ghost small" type="button" id="fkCsv"><svg class="ic"><use href="#i-csv"/></svg>CSV</button>
+      </div>
+      <div class="tbl-wrap"><table class="tbl" id="fkTbl"></table></div>
+    </div>
+  </section>
+
   <section id="welcome">
     <div class="steps">
       <div class="step reveal" style="--d:.05s"><span class="num">۱</span><b>جستجو کنید</b><p>کالا یا حوزه فعالیت (مثلاً «ذرت») را بنویسید. جستجوی تازه با یک کلیک در گیت‌هاب اجرا می‌شود و وضعیت اجرای آن زنده نمایش داده می‌شود.</p></div>
@@ -589,7 +634,7 @@ async function copyText(t,label){
 
 /* ---------- state ---------- */
 let SYN={modifiers:[],groups:[]};
-const S={done:new Set(),db:{},searches:{},kw:null,search:null,rows:[],view:[],sort:{key:'rank',dir:1},filter:'',statFilter:null,running:false,timers:[],run:null,ready:false};
+const S={fk:{},fkS:{},matches:{},fkKw:null,fkRows:[],fkView:[],fkHidden:{},done:new Set(),db:{},searches:{},kw:null,search:null,rows:[],view:[],sort:{key:'rank',dir:1},filter:'',statFilter:null,running:false,timers:[],run:null,ready:false};
 
 /* ---------- theme ---------- */
 function setTheme(t){
@@ -679,6 +724,7 @@ async function init(){
   $('chips').innerHTML='<span class="chips-note">در حال بارگذاری پایگاه‌داده…</span>';
   dbPromise=rj('companies').then(db=>{if(!Object.keys(S.db).length)S.db=db||{};return S.db;});
   S.searches=await rj('searches')||{};
+  loadFk();
   try{const h=JSON.parse(localStorage.getItem('sherkatyab_hidden')||'{}');HIDDEN=Array.isArray(h)?Object.fromEntries(h.map(k=>[k,Date.now()/1000])):h;}catch{}
   const now=Date.now()/1000;
   for(const k in HIDDEN){if(now-HIDDEN[k]>30*86400)delete HIDDEN[k];
@@ -778,6 +824,7 @@ const COLS=[
   {key:'founded',label:'تأسیس',sortable:true},
   {key:'licenses',label:'مجوز',sortable:true},
   {key:'profile',label:'پروفایل'},
+  {key:'fkm',label:'فودکیز'},
   {key:'act',label:'استعلام'},
 ];
 function renderTable(){
@@ -796,6 +843,7 @@ function renderTable(){
       <td class="nid">${r.founded?pd(r.founded):'—'}</td>
       <td>${r.licenses?`<span class="badge lic">${ic('cert')}${fa(r.licenses)}</span>`:'—'}</td>
       <td><span class="prof${r.hasProfile?' full':''}"><i></i>${r.hasProfile?'کامل':'پایه'}</span></td>
+      <td>${fkMatchHtml(r.id)}</td>
       <td>${doneBtn(r)}</td>
     </tr>`;
   }).join('');
@@ -1139,6 +1187,7 @@ const EXPORT_COLS=[
   ['تأییدشده',r=>r.verified?'بله':''],['تعداد مجوز',r=>r.licenses||''],
   ['مجوزها',r=>r.licenseList.join('، ')],['محصولات',r=>r.products.join('، ')],
   ['دسته‌بندی‌ها',r=>r.categories.join('، ')],['خلاصه',r=>r.summary],
+  ['تطبیق فودکیز',r=>{const m=(S.matches.rasmio||{})[r.id];return m?m.conf+'٪ — '+((S.fk[m.key]||{}).name||''):'';}],
 ];
 function exportRows(){return S.view.map(r=>Object.fromEntries(EXPORT_COLS.map(([k,f])=>[k,f(r)])));}
 function exportBase(){return 'companies-'+(S.kw||norm($('coKw').value)||'export');}
@@ -1165,12 +1214,139 @@ $('coXls').onclick=async()=>{
   }
   const rows=exportRows();
   const wb=XLSX.utils.book_new(),ws=XLSX.utils.json_to_sheet(rows);
-  ws['!cols']=[{wch:6},{wch:34},{wch:14},{wch:22},{wch:46},{wch:13},{wch:18},{wch:20},{wch:14},{wch:10},{wch:9},{wch:9},{wch:40},{wch:60},{wch:30},{wch:40}];
+  ws['!cols']=[{wch:6},{wch:34},{wch:14},{wch:22},{wch:46},{wch:13},{wch:18},{wch:20},{wch:14},{wch:10},{wch:9},{wch:9},{wch:40},{wch:60},{wch:30},{wch:40},{wch:36}];
   wb.Workbook={Views:[{RTL:true}]};
   XLSX.utils.book_append_sheet(wb,ws,'شرکت‌ها');
   XLSX.writeFile(wb,exportBase()+'.xlsx');
   toast('فایل اکسل دانلود شد ('+fa(rows.length)+' شرکت)','ok');
 };
+
+/* ---------- foodkeys ---------- */
+const FK_BANKS={food_importers:'واردکنندگان و صادرکنندگان',wholesale_trade:'پخش و عمده‌فروشان',raw_materials:'مواد اولیه',additives:'افزودنی‌ها',producers:'تولیدکنندگان'};
+const FK_RUNS='https://github.com/'+REPO+'/actions/workflows/foodkeys-search.yml';
+const fkBankName=b=>FK_BANKS[b]||b;
+function fkMatchHtml(id){
+  const m=(S.matches.rasmio||{})[id],k=(S.matches.known||{})['r:'+id];
+  const f=m&&S.fk[m.key];
+  const kn=k?`<span class="known" title="در فهرست شرکت‌های شناخته‌شده: ${esc(k)}">⭐ ${esc(k)}</span>`:'';
+  if(!f)return kn||'<span class="nid">—</span>';
+  return `<span class="conf ${m.conf>=75?'hi':m.conf<55?'lo':''}" title="${esc(m.why.join(' • '))}">${fa(m.conf)}٪</span><div class="co-sum"><a href="${esc(f.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${esc(f.name)}</a></div>${kn}`;
+}
+async function loadFk(){
+  try{S.fkHidden=JSON.parse(localStorage.getItem('sherkatyab_fkhidden')||'{}');}catch{}
+  const [fk,ss,mt]=await Promise.all([rj('foodkeys'),rj('foodkeys_searches'),rj('matches')]);
+  S.fk=fk||{};S.fkS=ss||{};S.matches=mt||{};
+  for(const k in S.fkHidden){if(S.fkS[k]&&S.fkS[k].at<=S.fkHidden[k])delete S.fkS[k];}
+  $('fkBanks').innerHTML='<span>بانک‌ها:</span>'+Object.entries(FK_BANKS).map(([k,v])=>`<label><input type="checkbox" value="${k}" checked>${v}</label>`).join('');
+  renderFkChips();
+  if(S.rows&&S.rows.length)renderTable();  // ستون تطبیق پس از رسیدن داده
+}
+function renderFkChips(){
+  const list=Object.values(S.fkS).filter(s=>s&&s.ids&&s.ids.length).sort((a,b)=>b.at-a.at);
+  $('fkChips').innerHTML=list.map(s=>`<button type="button" class="fkchip${s.keyword===S.fkKw?' active':''}" data-kw="${esc(s.keyword)}"><b>${esc(s.keyword)}</b><span class="n">${fa(s.ids.length)}</span><span class="x" role="button" data-del="${esc(s.keyword)}" title="حذف" aria-label="حذف">✕</span></button>`).join('');
+  $('fkChips').querySelectorAll('.fkchip').forEach(c=>c.onclick=e=>{
+    const d=e.target.closest('[data-del]');
+    if(d){e.stopPropagation();fkDelete(d.dataset.del);return;}
+    $('fkKw').value=c.dataset.kw;showFk(c.dataset.kw);
+  });
+}
+async function fkDelete(kw){
+  S.fkHidden[kw]=Date.now()/1000;try{localStorage.setItem('sherkatyab_fkhidden',JSON.stringify(S.fkHidden));}catch{}
+  delete S.fkS[kw];if(S.fkKw===kw){S.fkKw=null;$('fkRes').hidden=true;}renderFkChips();
+  const tok=$('coTok').value.trim()||(()=>{try{return localStorage.getItem('bazarban_gh')||'';}catch{return '';}})();
+  if(tok)fetch(API+'/actions/workflows/foodkeys-search.yml/dispatches',{method:'POST',headers:{Authorization:'Bearer '+tok,Accept:'application/vnd.github+json'},body:JSON.stringify({ref:'main',inputs:{keyword:kw,delete:'true'}})}).catch(()=>{});
+  toast('جستجو از فهرست برداشته شد'+(tok?'':' (برای حذف از پایگاه‌داده توکن لازم است)'),'ok');
+}
+const fkTxt=c=>{const d=c.detail||{},f=d.fields||{};return {strong:[['نام',c.name],['برند',f['نام تجاری ( برند )']||''],['محصولات',d.products||c.summary||'']],all:[c.name,c.summary,d.products,Object.values(f).join(' ')].join(' ')};};
+function fkRel(c,units,R){
+  const t=fkTxt(c),hay=lc(t.all),hasU=u=>u.some(v=>hay.includes(v));
+  if(units.length&&units.every(hasU))return 2;
+  return R.some(v=>hay.includes(v))||units.some(hasU)?1:0;
+}
+function fkBuild(s){
+  const units=kwUnits(s.keyword),R=kwRelated(s.keyword),mf=Object.fromEntries(Object.entries(S.matches.rasmio||{}).map(([rid,m])=>[m.key,{rid,...m}]));
+  return s.ids.map((k,i)=>{
+    const c=S.fk[k];if(!c)return null;
+    const d=c.detail||{},f=d.fields||{},m=mf[k];
+    return {k,c,rank:i+1,name:c.name,bank:c.bank,summary:c.summary,views:c.views||0,rating:c.rating||0,ceo:f['مدیر عامل']||'',
+      address:f['آدرس']||'',phones:d.phones||[],emails:d.emails||[],sites:d.sites||[],hasDetail:!!c.detail,
+      conf:m?m.conf:0,rname:m?((S.db[m.rid]||{}).name||''):'',why:m?m.why:[],known:(S.matches.known||{})['f:'+k]||'',rel:fkRel(c,units,R),url:c.url};
+  }).filter(Boolean);
+}
+async function showFk(kw){
+  const s=S.fkS[kw];if(!s)return;
+  S.fkKw=kw;S.fkRows=fkBuild(s);$('fkRes').hidden=false;renderFkChips();fkApply();
+  $('fk').scrollIntoView({behavior:'smooth',block:'start'});
+}
+let fkOpen=new Set();
+function fkApply(){
+  const f=norm($('fkFilter').value).toLowerCase(),hasRel=S.fkRows.some(r=>r.rel>0),only=$('fkRel').checked&&hasRel;
+  let v=S.fkRows.filter(r=>(!only||r.rel)&&(!f||lc([r.name,r.summary,r.ceo,r.address,r.phones.join(' '),r.emails.join(' '),(r.c.detail||{}).products].join(' ')).includes(f)));
+  const key=$('fkSort').value;
+  v.sort(key==='views'?(a,b)=>b.views-a.views:key==='conf'?(a,b)=>b.conf-a.conf||b.rel-a.rel:key==='name'?(a,b)=>a.name.localeCompare(b.name,'fa'):(a,b)=>(b.rel-a.rel)||(b.known?1:0)-(a.known?1:0)||b.views-a.views);
+  S.fkView=v;
+  $('fkCount').textContent=fa(v.length)+' از '+fa(S.fkRows.length)+' شرکت'+(S.fkRows.some(r=>!r.hasDetail)?' — جزئیات بقیه در اجرای بعدی (جستجوی تازه) خوانده می‌شود':'');
+  const th=['#','شرکت','بانک','مدیرعامل','تماس','نشانی','بازدید','تطبیق رسمیو'].map(t=>`<th scope="col">${t}</th>`).join('');
+  $('fkTbl').innerHTML=`<thead><tr>${th}</tr></thead><tbody>${v.map((r,i)=>{
+    const ev=r.rel?`<div class="co-ev"><b>${r.rel===2?'مرتبط':'احتمالی'}</b></div>`:'<div class="co-ev weak">نشانه‌ای از کلیدواژه نیست</div>';
+    const ct=[...r.phones.map(p=>pd(p)),...r.emails,...r.sites].map(esc).join('<br>')||(r.hasDetail?'<span class="nid">محفوظ/ندارد</span>':'<span class="nid">—</span>');
+    const cf=r.conf?`<span class="conf ${r.conf>=75?'hi':r.conf<55?'lo':''}" title="${esc(r.why.join(' • '))}">${fa(r.conf)}٪</span><div class="co-sum">${esc(r.rname)}</div>`:'<span class="nid">—</span>';
+    const det=fkOpen.has(r.k)?`<tr class="fk-det"><td colspan="8"><dl>${Object.entries((r.c.detail||{}).fields||{}).map(([a,b])=>`<dt>${esc(a)}</dt><dd>${esc(b)}</dd>`).join('')||'<dt>—</dt><dd>جزئیات هنوز خوانده نشده</dd>'}</dl>${(r.c.detail||{}).about?`<p class="co-sum">${esc(r.c.detail.about)}</p>`:''}<a href="${esc(r.url)}" target="_blank" rel="noopener">صفحه در فودکیز ↗</a></td></tr>`:'';
+    return `<tr data-k="${esc(r.k)}"><td>${fa(i+1)}</td><td><div class="co-name">${esc(r.name)}${r.known?`<span class="known">⭐ ${esc(r.known)}</span>`:''}</div><div class="co-sum">${esc(r.summary)}</div>${ev}</td><td>${esc(fkBankName(r.bank))}</td><td>${esc(r.ceo)||'—'}</td><td class="fk-c">${ct}</td><td>${esc(r.address)||'—'}</td><td class="nid">${fa(r.views)}</td><td>${cf}</td></tr>${det}`;
+  }).join('')}</tbody>`;
+  $('fkTbl').querySelectorAll('tbody tr[data-k]').forEach(tr=>tr.onclick=e=>{if(e.target.closest('a'))return;const k=tr.dataset.k;fkOpen.has(k)?fkOpen.delete(k):fkOpen.add(k);fkApply();});
+}
+const FK_COLS=[['نام',r=>r.name],['بانک',r=>fkBankName(r.bank)],['مدیرعامل',r=>r.ceo],['تلفن‌ها',r=>r.phones.join('، ')],['ایمیل',r=>r.emails.join('، ')],['وب‌سایت',r=>r.sites.join('، ')],
+  ['نشانی',r=>r.address],['محصولات',r=>(r.c.detail||{}).products||r.summary],['بازدید',r=>r.views],['ستاره',r=>r.rating||''],['مرتبط',r=>r.rel===2?'بله':r.rel?'احتمالی':''],
+  ['شرکت متناظر در رسمیو',r=>r.rname],['درصد تطبیق',r=>r.conf||''],['دلیل تطبیق',r=>r.why.join(' • ')],['شناخته‌شده',r=>r.known],['لینک',r=>r.url],
+  ['سایر فیلدها',r=>Object.entries((r.c.detail||{}).fields||{}).map(([a,b])=>a+': '+b).join(' | ')]];
+const fkRows=()=>S.fkView.map(r=>Object.fromEntries(FK_COLS.map(([k,f])=>[k,f(r)])));
+$('fkCsv').onclick=()=>{
+  if(!S.fkView.length){toast('نتیجه‌ای برای خروجی نیست','warn');return;}
+  const rows=fkRows(),head=FK_COLS.map(c=>c[0]),q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob(['﻿'+[head.map(q).join(','),...rows.map(r=>head.map(h=>q(r[h])).join(','))].join('\r\n')],{type:'text/csv;charset=utf-8'}));
+  a.download='foodkeys-'+(S.fkKw||'export')+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+};
+$('fkXls').onclick=async()=>{
+  if(!S.fkView.length){toast('نتیجه‌ای برای خروجی نیست','warn');return;}
+  if(!window.XLSX){
+    const ls=src=>new Promise((ok,no)=>{const e=document.createElement('script');e.src=src;e.onload=ok;e.onerror=no;document.head.appendChild(e);});
+    try{await ls('xlsx.full.min.js');}catch{try{await ls('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');}catch{toast('اکسل بارگذاری نشد؛ CSV گرفته شد','warn');$('fkCsv').click();return;}}
+  }
+  const wb=XLSX.utils.book_new(),ws=XLSX.utils.json_to_sheet(fkRows());
+  ws['!cols']=[34,18,22,26,26,24,46,50,9,7,9,30,10,34,18,40,60].map(wch=>({wch}));
+  wb.Workbook={Views:[{RTL:true}]};XLSX.utils.book_append_sheet(wb,ws,'فودکیز');XLSX.writeFile(wb,'foodkeys-'+(S.fkKw||'export')+'.xlsx');
+  toast('فایل اکسل دانلود شد ('+fa(S.fkView.length)+' شرکت)','ok');
+};
+async function fkSearch(refresh){
+  if(S.running)return;
+  const kw=norm($('fkKw').value);
+  if(!kw){toast('عبارت جستجو را وارد کنید','warn');$('fkKw').focus();return;}
+  $('fkKw').value=kw;
+  if(!refresh&&S.fkS[kw]){showFk(kw);return;}
+  const tok=$('coTok').value.trim();
+  if(!tok){$('tokenBox').open=true;setStatus('warn','این عبارت هنوز در فودکیز جستجو نشده','توکن گیت‌هاب را در کادر «اتصال به گیت‌هاب» وارد کنید (همان توکن جستجوی رسمیو).');$('coTok').focus();window.scrollTo({top:0,behavior:'smooth'});return;}
+  try{localStorage.setItem('bazarban_gh',tok);}catch{}
+  delete S.fkHidden[kw];try{localStorage.setItem('sherkatyab_fkhidden',JSON.stringify(S.fkHidden));}catch{}
+  const banks=[...$('fkBanks').querySelectorAll('input:checked')].map(i=>i.value).join(',')||Object.keys(FK_BANKS).join(',');
+  setRunning(true);runT0=null;setStatus('run','درخواست فودکیز به گیت‌هاب ارسال شد…','');
+  let r=null;
+  try{r=await fetch(API+'/actions/workflows/foodkeys-search.yml/dispatches',{method:'POST',headers:{Authorization:'Bearer '+tok,Accept:'application/vnd.github+json'},
+    body:JSON.stringify({ref:'main',inputs:{keyword:kw,refresh:String(!!refresh),banks,pages:'2',details:'40'}})});}catch{}
+  if(!r||r.status!==204){setRunning(false);setStatus('error','اجرای جستجو ناموفق بود',r&&r.status===401?'توکن نامعتبر است.':'دسترسی توکن (Actions: write) یا اتصال را بررسی کنید.');return;}
+  const t0=Date.now(),was=(S.fkS[kw]||{}).at||null;
+  setStatus('run','جستجو در فودکیز در صف اجرا است…','کاوش آهسته و مؤدبانه انجام می‌شود (هر درخواست ۲ ثانیه)؛ معمولاً ۲ تا ۵ دقیقه. <a href="'+FK_RUNS+'" target="_blank" rel="noopener">مشاهده اجراها</a>');
+  const poll=setInterval(async()=>{
+    if(Date.now()-t0>25*60e3){stopPolling();setRunning(false);setStatus('error','نتیجه در زمان مورد انتظار نرسید','لاگ را در <a href="'+FK_RUNS+'" target="_blank" rel="noopener">تب Actions</a> ببینید.');return;}
+    const s=(await rj('foodkeys_searches'))[kw];
+    if(s&&s.ids&&s.at!==was){stopPolling();await loadFk();setRunning(false);hideStatus();showFk(kw);toast('جستجوی فودکیز ذخیره شد','ok');}
+  },12000);
+  S.timers=[poll];
+}
+$('fkForm').onsubmit=e=>{e.preventDefault();fkSearch(false);};
+$('fkRef').onclick=()=>fkSearch(true);
+$('fkFilter').addEventListener('input',fkApply);$('fkRel').onchange=fkApply;$('fkSort').onchange=fkApply;
 
 /* ---------- boot ---------- */
 if(!document.body.classList.contains('lock'))init();

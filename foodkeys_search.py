@@ -107,13 +107,14 @@ def detail(html):
                     withheld += 1
                 elif v:
                     fields.setdefault(m.group(1).strip(), v)
-    body = text(re.sub(r"(?is)<head.*?</head>", "", html)).translate(_D)
+    fields = {k: re.sub(r"\s*[\[(]at[\])]\s*", "@", v, flags=re.I) for k, v in fields.items()}  # the site writes info[at]x.com
+    body = re.sub(r"\s*[\[(]at[\])]\s*", "@", text("".join(secs.get(k, "") for k in ("nav-home", "nav-address", "nav-employee"))), flags=re.I).translate(_D)
     phones = sorted({("0" + x if x[0] != "0" else x) for x in PH.findall(" ".join(v for v in fields.values()).replace("-", "").replace(" ", ""))})
     emails = sorted(set(re.findall(r"[\w.+-]+@[\w-]+\.[\w.-]+", body)))
     sites = sorted({u.lower().rstrip("/") for u in re.findall(r"(?:https?://)?(?:www\.)?[a-z0-9-]+\.(?:com|ir|org|net|co)\b(?:/[\w./-]*)?", body, re.I)
-                    if "foodkeys" not in u.lower() and "enamad" not in u.lower()})
+                    if not re.search(r"foodkeys|enamad|w3\.org|google|schema\.org|\.(?:jpe?g|png|css|js)$", u.lower())})
     hist = text(secs.get("nav-history", ""))
-    return {"fields": fields, "phones": phones, "emails": emails, "sites": sites[:5], "withheld": withheld,
+    return {"v": 2, "fields": fields, "phones": phones, "emails": emails, "sites": sites[:5], "withheld": withheld,
             "products": fields.get("عنوان محصولات", ""), "about": hist[:1200]}
 
 
@@ -157,7 +158,7 @@ def run(kw, banks, pages, ndetails, refresh, site=None, now=None):
         ss[kw] = {"keyword": kw, "at": now, "total": len(ids), "ids": ids, "banks": banks}
     site = site or Site()
     got = 0
-    for k in [k for k in ss[kw]["ids"] if "detail" not in db[k]][:ndetails]:  # most-viewed first would need a sort; listing order is the site's own
+    for k in [k for k in ss[kw]["ids"] if (db[k].get("detail") or {}).get("v", 0) < 2][:ndetails]:  # most-viewed first would need a sort; listing order is the site's own
         try:
             db[k]["detail"] = detail(site.fetch(db[k]["url"]))
             got += 1
@@ -205,7 +206,7 @@ def score_pair(r, f):
     """Confidence 0-99 that Rasmio company r and foodkeys company f are the same legal/trading entity, plus the reasons."""
     p, d = r.get("profile") or {}, f.get("detail") or {}
     sim, why = name_sim(r.get("name", ""), f.get("name", "")), []
-    conf = sim * 70
+    conf = sim * 75
     if sim >= 0.5:
         why.append(f"شباهت نام {round(sim * 100)}٪")
     elif sim < 0.34:
@@ -232,7 +233,7 @@ def match_all():
     names = load_known()
     for cid, r in rs.items():
         best = max(((score_pair(r, f), k) for k, f in fk.items()), default=((0, []), None), key=lambda x: x[0][0])
-        if best[0][0] >= 45:
+        if best[0][0] >= 50:
             out[cid] = {"key": best[1], "conf": best[0][0], "why": best[0][1]}
         for n in names:
             if name_sim(n, r.get("name", "")) >= 0.8:
