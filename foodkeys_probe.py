@@ -43,6 +43,11 @@ def main(paths):
             if h.startswith("/") or "foodkeys.com" in h:
                 groups[re.sub(r"https?://[^/]+", "", h).strip("/").split("/")[0][:30]].append(h)
         print("link groups:", {k: (len(v), v[:8]) for k, v in sorted(groups.items(), key=lambda x: -len(x[1]))[:25]})
+        seen = {}
+        for h, t in re.findall(r'<a [^>]*href="([^"#]+)"[^>]*>(.*?)</a>', html, re.S | re.I):
+            if h.startswith("/view") or h.startswith("/food") or h.startswith("/agri"):
+                seen.setdefault(h, re.sub(r"<[^>]+>|\s+", " ", t).strip()[:60])
+        print("links:", [f"{h} = {t}" for h, t in list(seen.items())[:160]])
         print("headings:", [re.sub(r"<[^>]+>|\s+", " ", h).strip()[:80] for h in re.findall(r"<h[1-3][^>]*>(.*?)</h[1-3]>", html, re.S | re.I)][:25])
         print("json-ld:", [j[:600] for j in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.S)][:2])
         body = re.sub(r"<(script|style)\b.*?</\1>", " ", html, flags=re.S | re.I)
