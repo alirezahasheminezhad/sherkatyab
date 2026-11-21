@@ -33,6 +33,24 @@ def slug(kw):
     return re.sub(r"\s+", " ", kw).strip()
 
 
+def queries(kw):
+    """Rasmio matches loosely (an extra word like «قلم» pulls in unrelated companies), so search the core product
+    word(s) without grade modifiers, plus each Persian synonym from synonyms.json (max 4 searches)."""
+    try:
+        syn = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "synonyms.json"), encoding="utf-8"))
+    except (OSError, ValueError):
+        syn = {}
+    mods = {slug(m) for m in syn.get("modifiers", [])}
+    toks = kw.split()
+    core = " ".join(t for t in toks if t not in mods) or kw
+    out = [core]
+    for g in syn.get("groups", []):
+        g = [slug(x) for x in g]
+        if core in g or (len(toks) == 1 and kw in g):
+            out += [x for x in g if x not in out and re.search("[\u0600-\u06ff]", x)]  # Rasmio is Persian-only
+    return out[:4]
+
+
 def score(c, rank, n):
     """Bigger = bigger/more official. Base is Rasmio's own highest-capital order; verified + licenses add to it."""
     return round((n - rank) / max(n, 1) * 60 + (20 if c.get("verified_by_company") else 0)
@@ -46,20 +64,22 @@ async def run(kw, pages, refresh, search, company, now=None):
     s = searches.get(kw)
     fresh = s and now - s["at"] < TTL_DAYS * 86400 and not refresh
     if not fresh:
-        ids, total = [], 0
-        for p in range(1, pages + 1):
-            r = await search(query=kw, status="active", sort="highest_capital", page=p, page_size=PAGE)
-            total = r.get("total", 0)
-            for h in r.get("results", []):
-                cid = str(h["company_id"])
-                old = companies.get(cid, {})
-                companies[cid] = {**old, **h, "kw": sorted(set(old.get("kw", [])) | {kw})}
-                ids.append(cid)
-            if p >= r.get("pages", 0):
-                break
+        ids, total, qs = [], 0, queries(kw)
+        for q in qs:
+            for p in range(1, pages + 1):
+                r = await search(query=q, status="active", sort="highest_capital", page=p, page_size=PAGE)
+                total += r.get("total", 0) if p == 1 else 0
+                for h in r.get("results", []):
+                    cid = str(h["company_id"])
+                    old = companies.get(cid, {})
+                    companies[cid] = {**old, **h, "kw": sorted(set(old.get("kw", [])) | {kw})}
+                    if cid not in ids:
+                        ids.append(cid)
+                if p >= r.get("pages", 0):
+                    break
         if not ids:
             raise SystemExit(f"no result for {kw!r}; nothing saved")
-        searches[kw] = {"keyword": kw, "at": now, "total": total, "ids": ids}
+        searches[kw] = {"keyword": kw, "at": now, "total": total, "ids": ids, "queries": qs}
     ids = searches[kw]["ids"]
     # profiles (address, capital, board, shareholders, ...) for the best-ranked companies we do not have yet.
     # rs_company parses the whole page in one fetch, so sections=None keeps every section at no extra request cost.

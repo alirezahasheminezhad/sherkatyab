@@ -190,7 +190,7 @@ main{max-width:1240px;margin:0 auto;padding:clamp(14px,3vw,30px);display:grid;ga
 .age.stale{color:var(--saffron-ink)}
 [data-theme="dark"] .age.stale{color:var(--saffron)}
 
-.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
 .stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);transition:transform .15s,border-color .15s;text-align:right}
 .stat .si{width:40px;height:40px;flex:none;border-radius:12px;display:grid;place-items:center}
 .stat b{font-size:20px;font-weight:800;display:block;line-height:1.25;font-variant-numeric:tabular-nums}
@@ -232,6 +232,13 @@ table.tbl{border-collapse:separate;border-spacing:0;width:100%;font-size:12.8px;
 [data-theme="dark"] .rank.top{color:#08211d}
 .co-name{font-weight:700;font-size:13.2px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
 .co-sum{font-size:11.3px;color:var(--mute);margin-top:2px;max-width:340px}
+.co-ev{font-size:11px;color:var(--pistachio);margin-top:3px;max-width:340px}
+.co-ev.weak{color:var(--mute)}
+.chk{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;cursor:pointer;color:var(--ink)}
+.done-btn{display:inline-flex;align-items:center;gap:5px;font:inherit;font-size:11.5px;cursor:pointer;border:1px solid var(--line2);background:var(--surface);color:var(--ink);border-radius:99px;padding:5px 11px;white-space:nowrap}
+.done-btn svg{width:13px;height:13px}
+.done-btn:hover{border-color:var(--pistachio);color:var(--pistachio)}
+.done-btn.on{background:var(--pistachio-soft);color:var(--pistachio)}
 .badge{display:inline-flex;align-items:center;gap:4px;font-size:10.3px;font-weight:600;border-radius:99px;padding:2px 9px;white-space:nowrap}
 .badge svg{width:12px;height:12px}
 .badge.ok{background:var(--pistachio-soft);color:var(--pistachio)}
@@ -493,6 +500,7 @@ footer a{color:var(--teal)}
         <option value="founded:-1">تأسیس: جدیدترین</option>
         <option value="name:1">نام: الفبایی</option>
       </select>
+      <label class="chk"><input type="checkbox" id="coRel" checked>فقط نتایج مرتبط</label>
       <span class="count" id="coCount"></span>
       <div class="spacer"></div>
       <div class="exp-group">
@@ -578,7 +586,8 @@ async function copyText(t,label){
 }
 
 /* ---------- state ---------- */
-const S={db:{},searches:{},kw:null,search:null,rows:[],view:[],sort:{key:'rank',dir:1},filter:'',statFilter:null,running:false,timers:[],run:null,ready:false};
+let SYN={modifiers:[],groups:[]};
+const S={done:new Set(),db:{},searches:{},kw:null,search:null,rows:[],view:[],sort:{key:'rank',dir:1},filter:'',statFilter:null,running:false,timers:[],run:null,ready:false};
 
 /* ---------- theme ---------- */
 function setTheme(t){
@@ -623,8 +632,40 @@ $('tokClear').onclick=()=>{$('coTok').value='';try{localStorage.removeItem('baza
 
 /* ---------- init & chips ---------- */
 let dbPromise=null;
+/* ---------- relevance: keyword + synonyms (synonyms.json) ---------- */
+const lc=t=>norm(t).toLowerCase();
+const txt=v=>v==null?'':typeof v==='object'?Object.values(v).map(txt).join(' ، '):String(v);
+async function loadSyn(){try{const r=await fetch('synonyms.json',{cache:'no-cache'});if(r.ok)SYN=await r.json();}catch{}}
+function kwUnits(kw){  // [[variants of word 1],[variants of word 2],…]; grade words like «قلم» are dropped
+  const n=lc(kw),mods=SYN.modifiers.map(lc);
+  const core=n.split(' ').filter(t=>!mods.includes(t)).join(' ')||n;
+  const vars=t=>{const g=SYN.groups.find(g=>g.some(x=>lc(x)===t));return g?g.map(lc):[t];};
+  return SYN.groups.some(g=>g.some(x=>lc(x)===core))?[vars(core)]:core.split(' ').map(vars);
+}
+function relOf(r,units){  // 2 = all words in name/license/activity, 1 = some word anywhere (weak), 0 = no sign of it
+  const p=r.profile||{};
+  const strong=[['نام',r.name],['مجوز',r.licenseList.join(' ، ')],['فعالیت',txt([p.activity,p.industry])]];
+  const weak=[['محصول',r.products.join(' ، ')],['دسته',r.categories.join(' ، ')],['خلاصه',r.summary]];
+  const has=(h,us)=>us.every(u=>u.some(v=>h.includes(v)));
+  const snip=(lab,t)=>{const h=norm(t),l=h.toLowerCase(),v=units.flat().find(v=>l.includes(v)),i=l.indexOf(v);
+    return {lab,snip:h.slice(Math.max(0,i-25),i+v.length+35)};};
+  for(const [lab,t] of strong)if(has(lc(t),units))return {rel:2,ev:snip(lab,t)};
+  const f=strong.concat(weak).find(([,t])=>units.flat().some(v=>lc(t).includes(v)));  // part of the words, or only in products/summary
+  return f?{rel:1,ev:snip(f[0],f[1])}:{rel:0,ev:null};
+}
+const saveDone=()=>{try{localStorage.setItem('sherkatyab_done',JSON.stringify([...S.done]));}catch{}};
+function toggleDone(id){
+  const on=!S.done.has(id);on?S.done.add(id):S.done.delete(id);saveDone();
+  toast(on?'به دسته «استعلام‌شده» منتقل شد':'به لیست برگشت');renderStats();applyView();
+}
+const evHtml=r=>r.rel?`<div class="co-ev"><b>${r.rel===2?'مرتبط':'احتمالی'}</b> · ${esc(r.ev.lab)}: «${esc(r.ev.snip)}»</div>`:'<div class="co-ev weak">نشانه‌ای از کلیدواژه یا مترادف‌هایش پیدا نشد</div>';
+const doneBtn=r=>`<button type="button" class="done-btn${S.done.has(r.id)?' on':''}" data-done="${esc(r.id)}" title="${S.done.has(r.id)?'برگرداندن به لیست':'استعلام گرفتم؛ از لیست برود به دسته استعلام‌شده'}">${ic('check')}${S.done.has(r.id)?'بازگردانی':'استعلام شد'}</button>`;
+function bindDone(root){root.querySelectorAll('[data-done]').forEach(b=>b.onclick=e=>{e.stopPropagation();toggleDone(b.dataset.done);});}
+
 async function init(){
   if(S.ready)return;S.ready=true;
+  try{S.done=new Set(JSON.parse(localStorage.getItem('sherkatyab_done')||'[]'));}catch{}
+  await loadSyn();
   $('chipsWrap').hidden=false;
   $('chips').innerHTML='<span class="chips-note">در حال بارگذاری پایگاه‌داده…</span>';
   dbPromise=rj('companies').then(db=>{if(!Object.keys(S.db).length)S.db=db||{};return S.db;});
@@ -650,6 +691,7 @@ function renderChips(){
 /* ---------- rows & view ---------- */
 function buildRows(s){
   const ids=s.ranked&&s.ranked.length?s.ranked:(s.ids||[]);
+  const units=kwUnits(S.kw||'');
   return ids.map((id,i)=>{
     const c=S.db[id]||{},p=c.profile||{};
     return {rank:i+1,id,name:c.name||p.name||id,ceo:c.ceo||'',summary:c.summary||'',
@@ -658,11 +700,15 @@ function buildRows(s){
       legal:p.legal_form||'',status:p.status||'',verified:!!c.verified_by_company,
       licenses:c.license_count||0,licenseList:c.licenses||[],products:c.top_products||[],
       categories:c.top_categories||[],hasProfile:!!c.profile,profile:p,raw:c};
-  });
+  }).map(r=>({...r,...relOf(r,units)}));
 }
 function applyView(){
   const f=norm(S.filter).toLowerCase(),fd=enDig(S.filter).toLowerCase();
+  const hasRel=S.rows.some(r=>r.rel>0),onlyRel=$('coRel').checked&&hasRel;
   let v=S.rows.filter(r=>{
+    if(S.statFilter==='done')return S.done.has(r.id);
+    if(S.done.has(r.id))return false;
+    if(onlyRel&&!r.rel)return false;
     if(S.statFilter==='verified'&&!r.verified)return false;
     if(S.statFilter==='profile'&&!r.hasProfile)return false;
     if(S.statFilter==='licensed'&&!r.licenses)return false;
@@ -672,7 +718,7 @@ function applyView(){
   });
   const {key,dir}=S.sort;
   const cmp={
-    rank:(a,b)=>a.rank-b.rank,
+    rank:(a,b)=>(b.rel-a.rel)||a.rank-b.rank,
     name:(a,b)=>a.name.localeCompare(b.name,'fa'),
     capital:(a,b)=>(a.capital||0)-(b.capital||0),
     licenses:(a,b)=>a.licenses-b.licenses,
@@ -681,7 +727,7 @@ function applyView(){
   v.sort((a,b)=>dir*cmp(a,b)||(a.rank-b.rank));
   S.view=v;
   renderTable();renderCards();
-  $('coCount').textContent=fa(v.length)+' از '+fa(S.rows.length)+' شرکت';
+  $('coCount').textContent=fa(v.length)+' از '+fa(S.rows.length)+' شرکت'+($('coRel').checked&&!hasRel?' — هیچ‌کدام مطابق کلیدواژه نبود؛ همه نمایش داده شد':'');
   $('noMatch').hidden=!!v.length||!S.rows.length;
   document.querySelector('.tbl-wrap').style.display=v.length?'':'none';
   $('cards').style.display=v.length?'':'none';
@@ -697,6 +743,7 @@ const COLS=[
   {key:'founded',label:'تأسیس',sortable:true},
   {key:'licenses',label:'مجوز',sortable:true},
   {key:'profile',label:'پروفایل'},
+  {key:'act',label:'استعلام'},
 ];
 function renderTable(){
   const th=COLS.map(c=>{
@@ -707,13 +754,14 @@ function renderTable(){
     const ch=capHuman(r.capital);
     return `<tr data-id="${esc(r.id)}" tabindex="0" aria-label="${esc(r.name)}">
       <td><span class="rank${r.rank<=3?' top':''}">${fa(r.rank)}</span></td>
-      <td><div class="co-name">${esc(r.name)}${r.verified?`<span class="badge ok" title="پروفایل توسط خود شرکت تأیید شده">${ic('check')}تأییدشده</span>`:''}</div>${r.summary?`<div class="co-sum">${esc(r.summary)}</div>`:''}</td>
+      <td><div class="co-name">${esc(r.name)}${r.verified?`<span class="badge ok" title="پروفایل توسط خود شرکت تأیید شده">${ic('check')}تأییدشده</span>`:''}</div>${r.summary?`<div class="co-sum">${esc(r.summary)}</div>`:''}${evHtml(r)}</td>
       <td class="nid">${pd(r.id)}</td>
       <td>${esc(r.ceo)||'—'}</td>
       <td>${ch?`<span class="cap" title="${fa(r.capital)} ریال">${ch}<small>${fa(r.capital)} ریال</small></span>`:'<span class="nid">—</span>'}</td>
       <td class="nid">${r.founded?pd(r.founded):'—'}</td>
       <td>${r.licenses?`<span class="badge lic">${ic('cert')}${fa(r.licenses)}</span>`:'—'}</td>
       <td><span class="prof${r.hasProfile?' full':''}"><i></i>${r.hasProfile?'کامل':'پایه'}</span></td>
+      <td>${doneBtn(r)}</td>
     </tr>`;
   }).join('');
   $('coTbl').innerHTML=`<thead><tr>${th}</tr></thead><tbody>${trs}</tbody>`;
@@ -724,8 +772,9 @@ function renderTable(){
   });
   $('coTbl').querySelectorAll('tbody tr').forEach(tr=>{
     tr.onclick=()=>openDrawer(tr.dataset.id);
-    tr.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openDrawer(tr.dataset.id);}};
+    tr.onkeydown=e=>{if(e.target===tr&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openDrawer(tr.dataset.id);}};
   });
+  bindDone($('coTbl'));
 }
 function renderCards(){
   $('cards').innerHTML=S.view.map(r=>{
@@ -736,12 +785,14 @@ function renderCards(){
         <span class="prof${r.hasProfile?' full':''}"><i></i></span></div>
       <div style="display:flex;gap:6px;flex-wrap:wrap">${r.verified?`<span class="badge ok">${ic('check')}تأییدشده</span>`:''}${r.licenses?`<span class="badge lic">${ic('cert')}${fa(r.licenses)} مجوز</span>`:''}${r.legal?`<span class="badge form">${esc(r.legal)}</span>`:''}</div>
       <div class="meta">${r.ceo?`<span>مدیرعامل: <b>${esc(r.ceo)}</b></span>`:''}${ch?`<span>سرمایه: <b>${ch} ریال</b></span>`:''}${r.year?`<span>تأسیس: <b>${fa(r.year)}</b></span>`:''}</div>
+      ${evHtml(r)}<div>${doneBtn(r)}</div>
     </div>`;
   }).join('');
   $('cards').querySelectorAll('.card').forEach(c=>{
     c.onclick=()=>openDrawer(c.dataset.id);
-    c.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openDrawer(c.dataset.id);}};
+    c.onkeydown=e=>{if(e.target===c&&(e.key==='Enter'||e.key===' ')){e.preventDefault();openDrawer(c.dataset.id);}};
   });
+  bindDone($('cards'));
 }
 function syncSortSelect(){
   const v=S.sort.key+':'+S.sort.dir;
@@ -754,13 +805,14 @@ function renderStats(){
   const n={total:S.search.total||S.rows.length,stored:S.rows.length,
     verified:S.rows.filter(r=>r.verified).length,
     profile:S.rows.filter(r=>r.hasProfile).length,
-    licensed:S.rows.filter(r=>r.licenses>0).length};
+    licensed:S.rows.filter(r=>r.licenses>0).length,done:S.rows.filter(r=>S.done.has(r.id)).length};
   const items=[
     {k:'total',icon:'bld',cls:'t',num:n.total,label:'شرکت یافت‌شده'},
     {k:'stored',icon:'chart',cls:'s',num:n.stored,label:'در پایگاه‌داده'},
     {k:'verified',icon:'check',cls:'p',num:n.verified,label:'تأییدشده',filter:'verified'},
     {k:'profile',icon:'case',cls:'l',num:n.profile,label:'پروفایل کامل',filter:'profile'},
     {k:'licensed',icon:'cert',cls:'r',num:n.licensed,label:'دارای مجوز',filter:'licensed'},
+    {k:'done',icon:'check',cls:'p',num:n.done,label:'استعلام‌شده',filter:'done'},
   ];
   $('stats').innerHTML=items.map(i=>`<div class="stat${i.filter?' clickable':''}${S.statFilter===i.filter&&i.filter?' on':''}" data-f="${i.filter||''}" ${i.filter?'role="button" tabindex="0" title="فیلتر: فقط '+i.label+'"':''}>
     <span class="si ${i.cls}">${ic(i.icon)}</span><div><b>${fa(i.num)}</b><span>${i.label}</span></div></div>`).join('');
@@ -1040,6 +1092,7 @@ $('coRef').onclick=()=>{
   coSearch(true);
 };
 $('coFilter').addEventListener('input',()=>{S.filter=$('coFilter').value;applyView();});
+$('coRel').onchange=applyView;
 $('coSort').onchange=()=>{const [key,dir]=$('coSort').value.split(':');S.sort={key,dir:+dir};applyView();};
 
 /* ---------- export ---------- */
