@@ -32,6 +32,13 @@ def main(paths):
         try:
             st, final, html = get(url)
             print("inputs:", [(m[0], m[1][:30]) for m in re.findall(r'<(?:input|select|button)[^>]*?name="([^"]+)"[^>]*?(?:value="([^"]*)")?[^>]*>', html)][:40])
+            a = html.find("اطلاعات تماس")
+            if a >= 0:
+                seg = html[a:a+9000]
+                print("CONTACT", re.sub(r"\s+", " ", re.sub(r"<(?!/?(?:span|label|h5|a)\b)[^>]*>", " ", seg))[:3500])
+            g = html.find("GridView1")
+            if g >= 0:
+                print("ROW", re.sub(r"\s+", " ", html[g+900:g+4200]))
             for key in ("کلیک کنید", "details?id", "pagination", "page=", "Page$"):
                 k = html.find(key)
                 if k >= 0:
