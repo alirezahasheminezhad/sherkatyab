@@ -1,0 +1,59 @@
+name: Foodkeys search
+
+on:
+  workflow_dispatch:
+    inputs:
+      keyword:
+        description: Product keyword, e.g. زردچوبه
+        required: true
+      refresh:
+        description: Ignore the cache and search again
+        default: 'false'
+      delete:
+        description: Delete this saved search instead of searching
+        default: 'false'
+      banks:
+        description: Banks to search (comma separated)
+        default: food_importers,wholesale_trade,raw_materials,additives,producers
+      pages:
+        description: Result pages per bank
+        type: choice
+        options: ['1', '2', '3', '4']
+        default: '2'
+      details:
+        description: Company pages to read in this run (2 s each)
+        default: '30'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sherkatyab-search
+  cancel-in-progress: false
+
+jobs:
+  search:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Restore the database (db branch)
+        run: |
+          mkdir -p db
+          git fetch --depth=1 origin db 2>/dev/null && for f in $(git ls-tree --name-only FETCH_HEAD); do git show FETCH_HEAD:$f > db/$f; done || echo "no db branch yet"
+      - name: Search foodkeys and update the database
+        env:
+          KW: ${{ inputs.keyword }}
+          BANKS: ${{ inputs.banks }}
+          PAGES: ${{ inputs.pages || '2' }}
+          DETAILS: ${{ inputs.details || '30' }}
+        run: python foodkeys_search.py "$KW" --banks "$BANKS" --pages "$PAGES" --details "$DETAILS" ${{ inputs.refresh == 'true' && '--refresh' || '' }} ${{ inputs.delete == 'true' && '--delete' || '' }}
+      - name: Publish the database (single commit on the db branch)
+        run: |
+          d=$(mktemp -d) && cp db/* "$d" && cd "$d"
+          git init -q -b db && git config user.name bazarban-bot && git config user.email bot@users.noreply.github.com
+          git add . && git commit -qm "db $(date -u +%FT%TZ)"
+          git push -q -f https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git db

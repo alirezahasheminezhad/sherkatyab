@@ -38,7 +38,7 @@ jobs:
       - name: Restore the database (db branch)
         run: |
           mkdir -p db
-          git fetch --depth=1 origin db 2>/dev/null && for f in companies searches; do git show FETCH_HEAD:$f.json > db/$f.json; done || echo "no db branch yet"
+          git fetch --depth=1 origin db 2>/dev/null && for f in $(git ls-tree --name-only FETCH_HEAD); do git show FETCH_HEAD:$f > db/$f; done || echo "no db branch yet"
       - name: Search and update the database
         env:
           KW: ${{ inputs.keyword }}
