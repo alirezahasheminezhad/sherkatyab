@@ -644,16 +644,23 @@ function kwUnits(kw){  // [[variants of word 1],[variants of word 2],…]; grade
   const vars=t=>{const g=SYN.groups.find(g=>g.some(x=>lc(x)===t));return g?g.map(lc):[t];};
   return SYN.groups.some(g=>g.some(x=>lc(x)===core))?[vars(core)]:core.split(' ').map(vars);
 }
-function relOf(r,units){  // 2 = all words in name/license/activity, 1 = some word anywhere (weak), 0 = no sign of it
+function kwRelated(kw){  // کلمه‌های هم‌خانواده (مثلاً ادویه برای زردچوبه)؛ فقط «احتمالی» حساب می‌شوند
+  const n=lc(kw),mods=SYN.modifiers.map(lc),core=n.split(' ').filter(t=>!mods.includes(t)).join(' ')||n;
+  return (SYN.related||[]).filter(g=>g.for.some(x=>lc(x)===core)).flatMap(g=>g.terms.map(lc));
+}
+function relOf(r,units,R=[]){  // 2 = all words in name/license/activity, 1 = some word anywhere (weak), 0 = no sign of it
   const p=r.profile||{};
   const strong=[['نام',r.name],['مجوز',r.licenseList.join(' ، ')],['فعالیت',txt([p.activity,p.industry])]];
   const weak=[['محصول',r.products.join(' ، ')],['دسته',r.categories.join(' ، ')],['خلاصه',r.summary]];
   const has=(h,us)=>us.every(u=>u.some(v=>h.includes(v)));
   const snip=(lab,t)=>{const h=norm(t),l=h.toLowerCase(),v=units.flat().find(v=>l.includes(v)),i=l.indexOf(v);
     return {lab,snip:h.slice(Math.max(0,i-25),i+v.length+35)};};
+  const snipR=(lab,t)=>{const h=norm(t),l=h.toLowerCase(),v=R.find(v=>l.includes(v)),i=l.indexOf(v);return {lab,snip:h.slice(Math.max(0,i-25),i+v.length+35)};};
   for(const [lab,t] of strong)if(has(lc(t),units))return {rel:2,ev:snip(lab,t)};
   const f=strong.concat(weak).find(([,t])=>units.flat().some(v=>lc(t).includes(v)));  // part of the words, or only in products/summary
-  return f?{rel:1,ev:snip(f[0],f[1])}:{rel:0,ev:null};
+  if(f)return {rel:1,ev:snip(f[0],f[1])};
+  const g=strong.find(([,t])=>R.some(v=>lc(t).includes(v)));  // related category word (e.g. «ادویه») in name/license/activity
+  return g?{rel:1,ev:snipR(g[0],g[1])}:{rel:0,ev:null};
 }
 const saveDone=()=>{try{localStorage.setItem('sherkatyab_done',JSON.stringify([...S.done]));}catch{}};
 function toggleDone(id){
@@ -672,9 +679,11 @@ async function init(){
   $('chips').innerHTML='<span class="chips-note">در حال بارگذاری پایگاه‌داده…</span>';
   dbPromise=rj('companies').then(db=>{if(!Object.keys(S.db).length)S.db=db||{};return S.db;});
   S.searches=await rj('searches')||{};
-  try{HIDDEN=new Set(JSON.parse(localStorage.getItem('sherkatyab_hidden')||'[]'));}catch{}
-  HIDDEN=new Set([...HIDDEN].filter(k=>S.searches[k]));saveHidden();  // پاک‌شده‌ی واقعی از لیست مخفی‌ها خارج می‌شود
-  HIDDEN.forEach(k=>delete S.searches[k]);
+  try{const h=JSON.parse(localStorage.getItem('sherkatyab_hidden')||'{}');HIDDEN=Array.isArray(h)?Object.fromEntries(h.map(k=>[k,Date.now()/1000])):h;}catch{}
+  const now=Date.now()/1000;
+  for(const k in HIDDEN){if(now-HIDDEN[k]>30*86400)delete HIDDEN[k];
+    else if(S.searches[k]&&S.searches[k].at<=HIDDEN[k])delete S.searches[k];}  // db قدیمی/کش‌شده نباید جستجوی حذف‌شده را برگرداند؛ جستجوی تازه‌تر نمایش داده می‌شود
+  saveHidden();
   renderChips();
   let kw=null;
   try{kw=decodeURIComponent(location.hash.slice(1))||localStorage.getItem('sherkatyab_last');}catch{}
@@ -697,11 +706,12 @@ function renderChips(){
   });
 }
 /* حذف جستجوی ذخیره‌شده: فوراً در همین مرورگر پنهان می‌شود و با توکن، workflow آن را از پایگاه‌داده هم پاک می‌کند */
-let HIDDEN=new Set();
-const saveHidden=()=>{try{localStorage.setItem('sherkatyab_hidden',JSON.stringify([...HIDDEN]));}catch{}};
+let HIDDEN={};  // {عبارت: زمان حذف}
+const saveHidden=()=>{try{localStorage.setItem('sherkatyab_hidden',JSON.stringify(HIDDEN));}catch{}};
 async function deleteSearch(kw){
   if(!confirm('جستجوی «'+kw+'» و شرکت‌های ذخیره‌شده‌اش حذف شود؟'))return;
-  HIDDEN.add(kw);saveHidden();delete S.searches[kw];
+  HIDDEN[kw]=Date.now()/1000;saveHidden();delete S.searches[kw];
+  if(norm($('coKw').value)===kw)$('coKw').value='';  // تا با زدن جستجو دوباره ساخته نشود
   if(S.kw===kw){S.kw=null;$('results').hidden=true;$('welcome').hidden=false;try{localStorage.removeItem('sherkatyab_last');history.replaceState(null,'','#');}catch{}}
   renderChips();
   const tok=$('coTok').value.trim();
@@ -716,7 +726,7 @@ async function deleteSearch(kw){
 /* ---------- rows & view ---------- */
 function buildRows(s){
   const ids=s.ranked&&s.ranked.length?s.ranked:(s.ids||[]);
-  const units=kwUnits(S.kw||'');
+  const units=kwUnits(S.kw||''),R=kwRelated(S.kw||'');
   return ids.map((id,i)=>{
     const c=S.db[id]||{},p=c.profile||{};
     return {rank:i+1,id,name:c.name||p.name||id,ceo:c.ceo||'',summary:c.summary||'',
@@ -725,7 +735,7 @@ function buildRows(s){
       legal:p.legal_form||'',status:p.status||'',verified:!!c.verified_by_company,
       licenses:c.license_count||0,licenseList:c.licenses||[],products:c.top_products||[],
       categories:c.top_categories||[],hasProfile:!!c.profile,profile:p,raw:c};
-  }).map(r=>({...r,...relOf(r,units)}));
+  }).map(r=>({...r,...relOf(r,units,R)}));
 }
 function applyView(){
   const f=norm(S.filter).toLowerCase(),fd=enDig(S.filter).toLowerCase();
@@ -1039,7 +1049,7 @@ async function coSearch(refresh){
     $('coTok').focus();return;
   }
   try{localStorage.setItem('bazarban_gh',tok);}catch{}
-  HIDDEN.delete(kw);saveHidden();
+  delete HIDDEN[kw];saveHidden();
   setRunning(true);
   runT0=null;
   setStatus('run','در حال ارسال درخواست به گیت‌هاب…','');

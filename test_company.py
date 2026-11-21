@@ -22,7 +22,7 @@ assert cs.slug("دانش\u200cبنیان  كيوي ") == "دانش بنیان ک
 assert cs.slug("۱۲۳۴٥٦") == "123456"  # Persian/Arabic digits, same as the page's norm()
 asyncio.run(cs.run("ذرت\u200c", 3, False, fs, fc))
 assert calls["s"] == 1  # normalized variants hit the same cache entry
-assert cs.queries("زردچوبه قلم") == ["زردچوبه", "زرچوبه", "کورکوما", "کورکما"]  # modifier dropped, Persian synonyms added, English skipped
+assert cs.queries("زردچوبه قلم") == ["زردچوبه", "زرچوبه", "کورکوما", "ادویه", "ادویه جات"]  # modifier dropped, Persian synonyms added, English skipped
 assert cs.queries("ذرت") == ["ذرت"] and cs.queries("چیز ناشناخته") == ["چیز ناشناخته"]
 assert cs.delete("ذرت") and not cs.delete("ذرت")  # second delete: nothing left
 assert "ذرت" not in cs.load("searches") and cs.load("companies") == {}  # companies only that search listed are dropped

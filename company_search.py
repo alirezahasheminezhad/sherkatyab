@@ -35,7 +35,7 @@ def slug(kw):
 
 def queries(kw):
     """Rasmio matches loosely (an extra word like «قلم» pulls in unrelated companies), so search the core product
-    word(s) without grade modifiers, plus each Persian synonym from synonyms.json (max 4 searches)."""
+    word(s) without grade modifiers, plus up to 2 Persian synonyms and 2 related category words from synonyms.json (max 5 searches)."""
     try:
         syn = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "synonyms.json"), encoding="utf-8"))
     except (OSError, ValueError):
@@ -47,8 +47,11 @@ def queries(kw):
     for g in syn.get("groups", []):
         g = [slug(x) for x in g]
         if core in g or (len(toks) == 1 and kw in g):
-            out += [x for x in g if x not in out and re.search("[\u0600-\u06ff]", x)]  # Rasmio is Persian-only
-    return out[:4]
+            out += [x for x in g if x not in out and re.search("[\u0600-\u06ff]", x)][:2]  # Rasmio is Persian-only
+    for g in syn.get("related", []):  # broader category words: Rasmio indexes activities, rarely the exact product
+        if core in [slug(x) for x in g["for"]]:
+            out += [slug(x) for x in g["terms"] if slug(x) not in out][:2]
+    return out[:5]
 
 
 def delete(kw):
