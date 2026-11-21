@@ -31,7 +31,12 @@ def main(paths):
         time.sleep(max(delay, 2))
         try:
             st, final, html = get(url)
-            import os, hashlib; os.makedirs('out', exist_ok=True); open('out/'+hashlib.md5(url.encode()).hexdigest()[:8]+'.html','w',encoding='utf-8').write('<!-- '+url+' -->\n'+html)
+            print("inputs:", [(m[0], m[1][:30]) for m in re.findall(r'<(?:input|select|button)[^>]*?name="([^"]+)"[^>]*?(?:value="([^"]*)")?[^>]*>', html)][:40])
+            for key in ("کلیک کنید", "details?id", "pagination", "page=", "Page$"):
+                k = html.find(key)
+                if k >= 0:
+                    print("CTX", key, "::", re.sub(r"\s+", " ", html[max(0, k-900):k+900]))
+
         except Exception as e:
             print("fetch failed:", e)
             continue
