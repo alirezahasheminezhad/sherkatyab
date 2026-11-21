@@ -17,3 +17,7 @@ jobs:
         env:
           PATHS: ${{ inputs.paths }}
         run: python foodkeys_probe.py $PATHS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pages
+          path: out/

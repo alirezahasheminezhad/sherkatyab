@@ -31,6 +31,7 @@ def main(paths):
         time.sleep(max(delay, 2))
         try:
             st, final, html = get(url)
+            import os, hashlib; os.makedirs('out', exist_ok=True); open('out/'+hashlib.md5(url.encode()).hexdigest()[:8]+'.html','w',encoding='utf-8').write('<!-- '+url+' -->\n'+html)
         except Exception as e:
             print("fetch failed:", e)
             continue
