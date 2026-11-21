@@ -162,6 +162,8 @@ main{max-width:1240px;margin:0 auto;padding:clamp(14px,3vw,30px);display:grid;ga
 .chip:hover{background:rgba(255,253,248,.22);transform:translateY(-1px)}
 .chip.active{background:var(--saffron-hi);color:#3c2a06;border-color:transparent;font-weight:700}
 .chip .n{font-size:11px;opacity:.75}
+.chip-x{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;font-size:11px;line-height:1;margin-inline-start:2px;margin-inline-end:-6px;opacity:.6}
+.chip-x:hover,.chip-x:focus-visible{opacity:1;background:rgba(220,60,60,.85);color:#fff;outline:none}
 .chip .dot{width:7px;height:7px;border-radius:50%;background:#7ed957}
 .chip .dot.stale{background:var(--saffron-hi)}
 .chip.active .dot{background:#3c2a06}
@@ -670,6 +672,9 @@ async function init(){
   $('chips').innerHTML='<span class="chips-note">در حال بارگذاری پایگاه‌داده…</span>';
   dbPromise=rj('companies').then(db=>{if(!Object.keys(S.db).length)S.db=db||{};return S.db;});
   S.searches=await rj('searches')||{};
+  try{HIDDEN=new Set(JSON.parse(localStorage.getItem('sherkatyab_hidden')||'[]'));}catch{}
+  HIDDEN=new Set([...HIDDEN].filter(k=>S.searches[k]));saveHidden();  // پاک‌شده‌ی واقعی از لیست مخفی‌ها خارج می‌شود
+  HIDDEN.forEach(k=>delete S.searches[k]);
   renderChips();
   let kw=null;
   try{kw=decodeURIComponent(location.hash.slice(1))||localStorage.getItem('sherkatyab_last');}catch{}
@@ -681,11 +686,31 @@ function renderChips(){
   $('chips').innerHTML=list.map(s=>{
     const stale=(Date.now()/1000-s.at)>TTL_DAYS*86400;
     return `<button type="button" class="chip${s.keyword===S.kw?' active':''}" data-kw="${esc(s.keyword)}" title="${esc(faDate(s.at))} — ${stale?'قدیمی؛ جستجوی تازه پیشنهاد می‌شود':'به‌روز'}">
-      <i class="dot${stale?' stale':''}"></i><b>${esc(s.keyword)}</b><span class="n">${fa(s.ranked.length)}</span></button>`;
+      <i class="dot${stale?' stale':''}"></i><b>${esc(s.keyword)}</b><span class="n">${fa(s.ranked.length)}</span><span class="chip-x" role="button" tabindex="0" data-del="${esc(s.keyword)}" title="حذف این جستجوی ذخیره‌شده" aria-label="حذف «${esc(s.keyword)}»">✕</span></button>`;
   }).join('');
   $('chips').querySelectorAll('.chip').forEach(c=>c.onclick=()=>{
     const kw=c.dataset.kw;$('coKw').value=kw;showSearch(kw,S.searches[kw],true);
   });
+  $('chips').querySelectorAll('.chip-x').forEach(x=>{
+    x.onclick=e=>{e.stopPropagation();deleteSearch(x.dataset.del);};
+    x.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();deleteSearch(x.dataset.del);}};
+  });
+}
+/* حذف جستجوی ذخیره‌شده: فوراً در همین مرورگر پنهان می‌شود و با توکن، workflow آن را از پایگاه‌داده هم پاک می‌کند */
+let HIDDEN=new Set();
+const saveHidden=()=>{try{localStorage.setItem('sherkatyab_hidden',JSON.stringify([...HIDDEN]));}catch{}};
+async function deleteSearch(kw){
+  if(!confirm('جستجوی «'+kw+'» و شرکت‌های ذخیره‌شده‌اش حذف شود؟'))return;
+  HIDDEN.add(kw);saveHidden();delete S.searches[kw];
+  if(S.kw===kw){S.kw=null;$('results').hidden=true;$('welcome').hidden=false;try{localStorage.removeItem('sherkatyab_last');history.replaceState(null,'','#');}catch{}}
+  renderChips();
+  const tok=$('coTok').value.trim();
+  if(!tok){toast('فقط در این مرورگر پنهان شد؛ برای حذف از پایگاه‌داده توکن گیت‌هاب لازم است','warn');return;}
+  let r=null;
+  try{r=await fetch(API+'/actions/workflows/company-search.yml/dispatches',{method:'POST',
+    headers:{Authorization:'Bearer '+tok,Accept:'application/vnd.github+json'},
+    body:JSON.stringify({ref:'main',inputs:{keyword:kw,delete:'true',refresh:'false',pages:'1'}})});}catch{}
+  toast(r&&r.status===204?'حذف ثبت شد؛ تا ۱ تا ۲ دقیقه دیگر از پایگاه‌داده هم پاک می‌شود':'درخواست حذف به گیت‌هاب نرسید؛ فقط در این مرورگر پنهان شد','warn');
 }
 
 /* ---------- rows & view ---------- */
@@ -1014,6 +1039,7 @@ async function coSearch(refresh){
     $('coTok').focus();return;
   }
   try{localStorage.setItem('bazarban_gh',tok);}catch{}
+  HIDDEN.delete(kw);saveHidden();
   setRunning(true);
   runT0=null;
   setStatus('run','در حال ارسال درخواست به گیت‌هاب…','');

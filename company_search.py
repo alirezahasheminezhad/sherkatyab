@@ -51,6 +51,19 @@ def queries(kw):
     return out[:4]
 
 
+def delete(kw):
+    """Remove one saved search and the companies no other search still lists."""
+    kw = slug(kw)
+    companies, searches = load("companies"), load("searches")
+    if searches.pop(kw, None) is None:
+        return False
+    keep = {i for s in searches.values() for i in s["ids"]}
+    companies = {i: {**c, "kw": [k for k in c.get("kw", []) if k != kw]} for i, c in companies.items() if i in keep}
+    save("companies", companies)
+    save("searches", searches)
+    return True
+
+
 def score(c, rank, n):
     """Bigger = bigger/more official. Base is Rasmio's own highest-capital order; verified + licenses add to it."""
     return round((n - rank) / max(n, 1) * 60 + (20 if c.get("verified_by_company") else 0)
@@ -101,10 +114,13 @@ async def run(kw, pages, refresh, search, company, now=None):
 
 
 if __name__ == "__main__":
-    from rasmio_mcp.company import rs_company
-    from rasmio_mcp.search import rs_search_companies
     a = sys.argv[1:]
     if not a or not a[0].strip():
         raise SystemExit("keyword required")
+    if "--delete" in a:
+        print(f"{a[0]}: deleted={delete(a[0])}")
+        raise SystemExit
     pg = int(a[a.index("--pages") + 1]) if "--pages" in a else 3
+    from rasmio_mcp.company import rs_company
+    from rasmio_mcp.search import rs_search_companies
     asyncio.run(run(a[0], max(1, min(pg, 10)), "--refresh" in a, rs_search_companies, rs_company))

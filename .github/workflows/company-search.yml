@@ -9,6 +9,9 @@ on:
       refresh:
         description: Ignore the cache and search again
         default: 'false'
+      delete:
+        description: Delete this saved search from the database instead of searching
+        default: 'false'
       pages:
         description: Search depth (pages of 60 results)
         type: choice
@@ -41,7 +44,7 @@ jobs:
           KW: ${{ inputs.keyword }}
           REFRESH: ${{ inputs.refresh }}
           PAGES: ${{ inputs.pages || '3' }}
-        run: python company_search.py "$KW" --pages "$PAGES" ${{ inputs.refresh == 'true' && '--refresh' || '' }}
+        run: python company_search.py "$KW" --pages "$PAGES" ${{ inputs.refresh == 'true' && '--refresh' || '' }} ${{ inputs.delete == 'true' && '--delete' || '' }}
       - name: Publish the database (single commit on the db branch)
         run: |
           d=$(mktemp -d) && cp db/*.json "$d" && cd "$d"
