@@ -48,6 +48,11 @@ def main(paths):
             if h.startswith("/view") or h.startswith("/food") or h.startswith("/agri"):
                 seen.setdefault(h, re.sub(r"<[^>]+>|\s+", " ", t).strip()[:60])
         print("links:", [f"{h} = {t}" for h, t in list(seen.items())[:160]])
+        for sc in re.findall(r'<script\b[^>]*>(.*?)</script>', html, re.S | re.I):
+            for m in re.finditer(r'.{0,80}(\$http|\.ajax|WebMethod|\.aspx|/api/|ng-click|__doPostBack|\.json).{0,120}', sc):
+                print("js:", m.group(0).replace("\n", " ")[:220])
+        print("srcs:", re.findall(r'<script[^>]+src="([^"]+)"', html)[:20])
+        print("ngclick:", re.findall(r'ng-click="([^"]+)"', html)[:15])
         print("headings:", [re.sub(r"<[^>]+>|\s+", " ", h).strip()[:80] for h in re.findall(r"<h[1-3][^>]*>(.*?)</h[1-3]>", html, re.S | re.I)][:25])
         print("json-ld:", [j[:600] for j in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.S)][:2])
         body = re.sub(r"<(script|style)\b.*?</\1>", " ", html, flags=re.S | re.I)
