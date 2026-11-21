@@ -1,0 +1,19 @@
+name: Foodkeys probe
+# One-off: read a few public foodkeys.com pages (robots.txt respected) and print their structure to the log.
+on:
+  workflow_dispatch:
+    inputs:
+      paths:
+        description: Space-separated paths, e.g. "/ /suppliers/"
+        default: "/"
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe
+        env:
+          PATHS: ${{ inputs.paths }}
+        run: python foodkeys_probe.py $PATHS
