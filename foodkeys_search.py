@@ -112,7 +112,7 @@ def detail(html):
     phones = sorted({("0" + x if x[0] != "0" else x) for x in PH.findall(" ".join(v for v in fields.values()).replace("-", "").replace(" ", ""))})
     emails = sorted(set(re.findall(r"[\w.+-]+@[\w-]+\.[\w.-]+", body)))
     sites = sorted({u.lower().rstrip("/") for u in re.findall(r"(?:https?://)?(?:www\.)?[a-z0-9-]+\.(?:com|ir|org|net|co)\b(?:/[\w./-]*)?", body, re.I)
-                    if not re.search(r"foodkeys|enamad|w3\.org|google|schema\.org|\.(?:jpe?g|png|css|js)$", u.lower())})
+                    if not re.search(r"foodkeys|enamad|^(?:gmail|yahoo|hotmail|outlook)\\.|w3\.org|google|schema\.org|\.(?:jpe?g|png|css|js)$", u.lower())})
     hist = text(secs.get("nav-history", ""))
     return {"v": 2, "fields": fields, "phones": phones, "emails": emails, "sites": sites[:5], "withheld": withheld,
             "products": fields.get("عنوان محصولات", ""), "about": hist[:1200]}
