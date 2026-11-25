@@ -483,16 +483,16 @@ footer a{color:var(--teal)}
         <button class="btn icon" type="button" id="coRef" title="جستجوی تازه — نادیده گرفتن ذخیره" aria-label="جستجوی تازه"><svg class="ic"><use href="#i-refresh"/></svg></button>
       </form>
       <details id="tokenBox">
-        <summary><span class="tok-dot" id="tokDot"></span>اتصال به گیت‌هاب برای جستجوی تازه<svg class="ic chev"><use href="#i-chev"/></svg></summary>
+        <summary><span class="tok-dot" id="tokDot"></span>رمز مدیر برای جستجوی تازه<svg class="ic chev"><use href="#i-chev"/></svg></summary>
         <div class="tok-body">
           <div class="tok-row">
             <div class="inp" style="flex:1;min-width:220px">
-              <input id="coTok" type="password" autocomplete="off" placeholder="توکن Fine-grained گیت‌هاب" aria-label="توکن گیت‌هاب">
-              <button class="eye" type="button" id="tokEye" aria-label="نمایش توکن"><svg class="ic"><use href="#i-eye"/></svg></button>
+              <input id="coTok" type="password" autocomplete="off" placeholder="رمز مدیر" aria-label="رمز مدیر">
+              <button class="eye" type="button" id="tokEye" aria-label="نمایش رمز"><svg class="ic"><use href="#i-eye"/></svg></button>
             </div>
             <button class="btn ghost small" type="button" id="tokClear">پاک‌کردن</button>
           </div>
-          <p class="tok-help">فقط روی همین مرورگر ذخیره می‌شود. ساخت توکن: <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Fine-grained token</a> ← Repository access: فقط همین مخزن ← Permissions: <b>Actions → Read and write</b>. جستجوهای ذخیره‌شده بدون توکن هم باز می‌شوند.</p>
+          <p class="tok-help">فقط روی همین مرورگر ذخیره می‌شود. جستجوهای ذخیره‌شده بدون رمز هم باز می‌شوند.</p>
         </div>
       </details>
       <div id="chipsWrap" hidden>
@@ -666,16 +666,19 @@ $('logoutBtn').onclick=()=>{
   stopPolling();setRunning(false);hideStatus();document.body.classList.add('lock');setTimeout(()=>$('pw').focus(),60);
 };
 
-/* ---------- token ---------- */
+/* ---------- رمز مدیر: توکن گیت‌هاب فقط در Worker (مخزن Bazarban، پوشهٔ gate) است ---------- */
+const GATE_URL='https://github-gate.ezaccess14ea188.workers.dev/';
+const gate=(pass,body)=>fetch(GATE_URL,{method:'POST',headers:{Authorization:'Bearer '+pass,'Content-Type':'application/json'},body:JSON.stringify(body)});
+try{localStorage.removeItem('bazarban_gh');}catch{}
 function tokSync(){
   const v=$('coTok').value.trim();
   $('tokDot').classList.toggle('on',!!v);
 }
-try{$('coTok').value=localStorage.getItem('bazarban_gh')||'';}catch{}
+try{$('coTok').value=localStorage.getItem('gate_password')||'';}catch{}
 tokSync();
-$('coTok').addEventListener('input',()=>{try{localStorage.setItem('bazarban_gh',$('coTok').value.trim());}catch{}tokSync();});
+$('coTok').addEventListener('input',()=>{try{localStorage.setItem('gate_password',$('coTok').value.trim());}catch{}tokSync();});
 $('tokEye').onclick=()=>{const i=$('coTok');i.type=i.type==='password'?'text':'password';$('tokEye').innerHTML=ic(i.type==='password'?'eye':'eyeoff');};
-$('tokClear').onclick=()=>{$('coTok').value='';try{localStorage.removeItem('bazarban_gh');}catch{}tokSync();toast('توکن از این مرورگر پاک شد','warn');};
+$('tokClear').onclick=()=>{$('coTok').value='';try{localStorage.removeItem('gate_password');}catch{}tokSync();toast('رمز از این مرورگر پاک شد','warn');};
 
 /* ---------- init & chips ---------- */
 let dbPromise=null;
@@ -751,7 +754,7 @@ function renderChips(){
     x.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();deleteSearch(x.dataset.del);}};
   });
 }
-/* حذف جستجوی ذخیره‌شده: فوراً در همین مرورگر پنهان می‌شود و با توکن، workflow آن را از پایگاه‌داده هم پاک می‌کند */
+/* حذف جستجوی ذخیره‌شده: فوراً در همین مرورگر پنهان می‌شود و با رمز مدیر، workflow آن را از پایگاه‌داده هم پاک می‌کند */
 let HIDDEN={};  // {عبارت: زمان حذف}
 const saveHidden=()=>{try{localStorage.setItem('sherkatyab_hidden',JSON.stringify(HIDDEN));}catch{}};
 async function deleteSearch(kw){
@@ -761,11 +764,9 @@ async function deleteSearch(kw){
   if(S.kw===kw){S.kw=null;$('results').hidden=true;$('welcome').hidden=false;try{localStorage.removeItem('sherkatyab_last');history.replaceState(null,'','#');}catch{}}
   renderChips();
   const tok=$('coTok').value.trim();
-  if(!tok){toast('فقط در این مرورگر پنهان شد؛ برای حذف از پایگاه‌داده توکن گیت‌هاب لازم است','warn');return;}
+  if(!tok){toast('فقط در این مرورگر پنهان شد؛ برای حذف از پایگاه‌داده رمز مدیر لازم است','warn');return;}
   let r=null;
-  try{r=await fetch(API+'/actions/workflows/company-search.yml/dispatches',{method:'POST',
-    headers:{Authorization:'Bearer '+tok,Accept:'application/vnd.github+json'},
-    body:JSON.stringify({ref:'main',inputs:{keyword:kw,delete:'true',refresh:'false',pages:'1'}})});}catch{}
+  try{r=await gate(tok,{action:'search',workflow:'company',inputs:{keyword:kw,delete:'true',refresh:'false',pages:'1'}});}catch{}
   toast(r&&r.status===204?'حذف ثبت شد؛ تا ۱ تا ۲ دقیقه دیگر از پایگاه‌داده هم پاک می‌شود':'درخواست حذف به گیت‌هاب نرسید؛ فقط در این مرورگر پنهان شد','warn');
 }
 
@@ -1076,7 +1077,7 @@ function stopPolling(){
 function cancelSearch(){
   const run=S.run,tok=$('coTok').value.trim();
   stopPolling();setRunning(false);
-  if(run&&tok){fetch(API+'/actions/runs/'+run.id+'/cancel',{method:'POST',headers:{Authorization:'Bearer '+tok,Accept:'application/vnd.github+json'}}).catch(()=>{});}
+  if(run&&tok){gate(tok,{action:'cancel',id:run.id}).catch(()=>{});}
   setStatus('warn','جستجو متوقف شد','درخواست اجرا لغو شد؛ هر زمان بخواهید دوباره جستجو کنید.');
   toast('جستجو متوقف شد','warn');
 }
@@ -1093,25 +1094,23 @@ async function coSearch(refresh){
   const tok=$('coTok').value.trim();
   if(!tok){
     $('tokenBox').open=true;
-    setStatus('warn','این عبارت هنوز جستجو نشده است','برای اجرای جستجوی تازه، توکن گیت‌هاب (دسترسی Actions: write) را در کادر بالا وارد کنید. جستجوهای ذخیره‌شده بدون توکن باز می‌شوند.');
+    setStatus('warn','این عبارت هنوز جستجو نشده است','برای اجرای جستجوی تازه، رمز مدیر را در کادر بالا وارد کنید. جستجوهای ذخیره‌شده بدون رمز باز می‌شوند.');
     $('coTok').focus();return;
   }
-  try{localStorage.setItem('bazarban_gh',tok);}catch{}
+  try{localStorage.setItem('gate_password',tok);}catch{}
   delete HIDDEN[kw];saveHidden();
   setRunning(true);
   runT0=null;
   setStatus('run','در حال ارسال درخواست به گیت‌هاب…','');
   let r;
   try{
-    r=await fetch(API+'/actions/workflows/company-search.yml/dispatches',{method:'POST',
-      headers:{Authorization:'Bearer '+tok,Accept:'application/vnd.github+json'},
-      body:JSON.stringify({ref:'main',inputs:{keyword:kw,refresh:String(!!refresh),pages:$('coPages').value}})});
+    r=await gate(tok,{action:'search',workflow:'company',inputs:{keyword:kw,refresh:String(!!refresh),pages:$('coPages').value}});
   }catch(e){r=null;}
   if(!r||r.status!==204){
     setRunning(false);
     const code=r?r.status:0;
-    const why=code===401?'توکن نامعتبر یا منقضی است.':code===403?'دسترسی توکن کافی نیست (Actions: read/write لازم است).':code===404?'توکن به این مخزن دسترسی ندارد.':'اتصال به گیت‌هاب برقرار نشد ('+pd(code)+').';
-    setStatus('error','اجرای جستجو ناموفق بود',why+' <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">ساخت توکن تازه</a>');
+    const why=code===401?'رمز مدیر اشتباه است.':code?'سرور واسط خطا داد ('+pd(code)+').':'اتصال به سرور واسط برقرار نشد.';
+    setStatus('error','اجرای جستجو ناموفق بود',why);
     return;
   }
   const t0=Date.now(),was=(S.searches[kw]||{}).at||null;
@@ -1126,7 +1125,7 @@ async function coSearch(refresh){
     /* track the actual workflow run when the token allows it */
     if(!S.run||S.run.status!=='completed'){
       try{
-        const rr=await fetch(API+'/actions/runs?event=workflow_dispatch&per_page=10',{headers:{Authorization:'Bearer '+tok,Accept:'application/vnd.github+json'}});
+        const rr=await gate(tok,{action:'runs'});
         if(rr.ok){
           const runs=(await rr.json()).workflow_runs||[];
           const run=runs.find(x=>(x.path||'').includes('company-search')&&new Date(x.created_at).getTime()>=t0-120000);
@@ -1253,9 +1252,9 @@ function renderFkChips(){
 async function fkDelete(kw){
   S.fkHidden[kw]=Date.now()/1000;try{localStorage.setItem('sherkatyab_fkhidden',JSON.stringify(S.fkHidden));}catch{}
   delete S.fkS[kw];if(S.fkKw===kw){S.fkKw=null;$('fkRes').hidden=true;}renderFkChips();
-  const tok=$('coTok').value.trim()||(()=>{try{return localStorage.getItem('bazarban_gh')||'';}catch{return '';}})();
-  if(tok)fetch(API+'/actions/workflows/foodkeys-search.yml/dispatches',{method:'POST',headers:{Authorization:'Bearer '+tok,Accept:'application/vnd.github+json'},body:JSON.stringify({ref:'main',inputs:{keyword:kw,delete:'true'}})}).catch(()=>{});
-  toast('جستجو از فهرست برداشته شد'+(tok?'':' (برای حذف از پایگاه‌داده توکن لازم است)'),'ok');
+  const tok=$('coTok').value.trim()||(()=>{try{return localStorage.getItem('gate_password')||'';}catch{return '';}})();
+  if(tok)gate(tok,{action:'search',workflow:'foodkeys',inputs:{keyword:kw,delete:'true'}}).catch(()=>{});
+  toast('جستجو از فهرست برداشته شد'+(tok?'':' (برای حذف از پایگاه‌داده رمز لازم است)'),'ok');
 }
 const fkTxt=c=>{const d=c.detail||{},f=d.fields||{};return {strong:[['نام',c.name],['برند',f['نام تجاری ( برند )']||''],['محصولات',d.products||c.summary||'']],all:[c.name,c.summary,d.products,Object.values(f).join(' ')].join(' ')};};
 function fkRel(c,units,R){
@@ -1326,15 +1325,14 @@ async function fkSearch(refresh){
   $('fkKw').value=kw;
   if(!refresh&&S.fkS[kw]){showFk(kw);return;}
   const tok=$('coTok').value.trim();
-  if(!tok){$('tokenBox').open=true;setStatus('warn','این عبارت هنوز در فودکیز جستجو نشده','توکن گیت‌هاب را در کادر «اتصال به گیت‌هاب» وارد کنید (همان توکن جستجوی رسمیو).');$('coTok').focus();window.scrollTo({top:0,behavior:'smooth'});return;}
-  try{localStorage.setItem('bazarban_gh',tok);}catch{}
+  if(!tok){$('tokenBox').open=true;setStatus('warn','این عبارت هنوز در فودکیز جستجو نشده','رمز مدیر را در کادر «رمز مدیر» بالا وارد کنید.');$('coTok').focus();window.scrollTo({top:0,behavior:'smooth'});return;}
+  try{localStorage.setItem('gate_password',tok);}catch{}
   delete S.fkHidden[kw];try{localStorage.setItem('sherkatyab_fkhidden',JSON.stringify(S.fkHidden));}catch{}
   const banks=[...$('fkBanks').querySelectorAll('input:checked')].map(i=>i.value).join(',')||Object.keys(FK_BANKS).join(',');
   setRunning(true);runT0=null;setStatus('run','درخواست فودکیز به گیت‌هاب ارسال شد…','');
   let r=null;
-  try{r=await fetch(API+'/actions/workflows/foodkeys-search.yml/dispatches',{method:'POST',headers:{Authorization:'Bearer '+tok,Accept:'application/vnd.github+json'},
-    body:JSON.stringify({ref:'main',inputs:{keyword:kw,refresh:String(!!refresh),banks,pages:'2',details:'40'}})});}catch{}
-  if(!r||r.status!==204){setRunning(false);setStatus('error','اجرای جستجو ناموفق بود',r&&r.status===401?'توکن نامعتبر است.':'دسترسی توکن (Actions: write) یا اتصال را بررسی کنید.');return;}
+  try{r=await gate(tok,{action:'search',workflow:'foodkeys',inputs:{keyword:kw,refresh:String(!!refresh),banks,pages:'2',details:'40'}});}catch{}
+  if(!r||r.status!==204){setRunning(false);setStatus('error','اجرای جستجو ناموفق بود',r&&r.status===401?'رمز مدیر اشتباه است.':'اتصال به سرور واسط را بررسی کنید.');return;}
   const t0=Date.now(),was=(S.fkS[kw]||{}).at||null;
   setStatus('run','جستجو در فودکیز در صف اجرا است…','کاوش آهسته و مؤدبانه انجام می‌شود (هر درخواست ۲ ثانیه)؛ معمولاً ۲ تا ۵ دقیقه. <a href="'+FK_RUNS+'" target="_blank" rel="noopener">مشاهده اجراها</a>');
   const poll=setInterval(async()=>{
